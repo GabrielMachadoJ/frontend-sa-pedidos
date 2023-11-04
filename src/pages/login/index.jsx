@@ -1,6 +1,7 @@
 import { Button, Card, TextField } from "@mui/material";
 import imgLogin from "../../assets/img-login.png";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -31,7 +32,7 @@ export default function Login() {
           display: "flex",
           justifyContent: "space-between",
           width: screenWidth >= 1920 ? "50%" : "95%",
-          height: screenWidth >= 1920 ? "65%" :"75%",
+          height: screenWidth >= 1920 ? "65%" : "75%",
         }}
       >
         <Card
@@ -45,40 +46,43 @@ export default function Login() {
             backgroundColor: "#FF2A00",
           }}
         >
-         <div style={{
-          display: "flex",
-          flexDirection: 'column',
-          textAlign: 'center'
-          
-         }}>
-         <span
+          <div
             style={{
-              color:'#f5f5f1',
-              fontSize: '2.2rem',
-              fontWeight: '500'
+              display: "flex",
+              flexDirection: "column",
+              textAlign: "center",
             }}
-          >Falta pouco </span>
-          <span
-            style={{
-              color:'#f5f5f1',
-              fontSize: '2.2rem',
-              fontWeight: '500'
-            }}
-          >para matar </span>
-         <span
-            style={{
-              color:'#f5f5f1',
-              fontSize: '2.2rem',
-              fontWeight: '500'
-            }}
-          > sua fome!</span>
-         </div>
-          <img
-            height={250}
-            width={370}
-            src={imgLogin}
-            alt="imagem do login"
-          />
+          >
+            <span
+              style={{
+                color: "#f5f5f1",
+                fontSize: "2.2rem",
+                fontWeight: "500",
+              }}
+            >
+              Falta pouco{" "}
+            </span>
+            <span
+              style={{
+                color: "#f5f5f1",
+                fontSize: "2.2rem",
+                fontWeight: "500",
+              }}
+            >
+              para matar{" "}
+            </span>
+            <span
+              style={{
+                color: "#f5f5f1",
+                fontSize: "2.2rem",
+                fontWeight: "500",
+              }}
+            >
+              {" "}
+              sua fome!
+            </span>
+          </div>
+          <img height={250} width={370} src={imgLogin} alt="imagem do login" />
         </Card>
         <div
           style={{
@@ -126,16 +130,18 @@ export default function Login() {
               backgroundColor: "#e0e9f383",
             }}
           />
-          <Button
-            variant="contained"
-            size="large"
-            style={{
-              backgroundColor: "#FF2A00",
-              padding: ".5rem 2rem",
-            }}
-          >
-            Entrar
-          </Button>
+          <Link to={"/home"}>
+            <Button
+              variant="contained"
+              size="large"
+              style={{
+                backgroundColor: "#FF2A00",
+                padding: ".5rem 2rem",
+              }}
+            >
+              Entrar
+            </Button>
+          </Link>
         </div>
       </Card>
     </div>
