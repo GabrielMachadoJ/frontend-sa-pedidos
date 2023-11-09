@@ -1,20 +1,10 @@
 import { Button, Card, TextField } from "@mui/material";
 import imgLogin from "../../assets/img-login.png";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useScreenSizeContext } from "../../context/useScreenSize";
 
 export default function Login() {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  const { screenWidth } = useScreenSizeContext();
 
   return (
     <div

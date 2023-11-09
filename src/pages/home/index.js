@@ -1,9 +1,13 @@
-import React from "react";
-import Slider from "react-slick";
-import styles from "./style.module.css";
+import React, { useCallback, useState } from "react";
 import Header from "../../components/Header";
 import { CaretCircleRight, CaretCircleLeft } from "@phosphor-icons/react";
-import { Button, ThemeProvider, createTheme } from "@mui/material";
+import { Button, IconButton, ThemeProvider, createTheme } from "@mui/material";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/pagination";
+import { useScreenSizeContext } from "../../context/useScreenSize";
 
 const theme = createTheme({
   palette: {
@@ -12,70 +16,8 @@ const theme = createTheme({
 });
 
 export default function Home() {
-  const { card, container } = styles;
-  const settings = {
-    dots: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    variableWidth: true,
-    responsive: [
-      {
-        breakpoint: 1921,
-        settings: {
-          centerMode: true,
-        },
-      },
-      {
-        breakpoint: 1380,
-        settings: {
-          slidesToScroll: 1,
-        },
-      },
-    ],
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
-  };
-
-  function SampleNextArrow(props) {
-    const { className, style, onClick } = props;
-    return (
-      <div
-        style={{
-          marginLeft: "2rem",
-        }}
-      >
-        <CaretCircleRight
-          onClick={onClick}
-          className={className}
-          style={{
-            ...style,
-            display: "block",
-            zIndex: "15",
-            height: "2rem",
-            width: "2rem",
-          }}
-          color="#726c6c"
-        />
-      </div>
-    );
-  }
-  function SamplePrevArrow(props) {
-    const { className, style, onClick } = props;
-    return (
-      <CaretCircleLeft
-        onClick={onClick}
-        className={className}
-        style={{
-          ...style,
-          zIndex: "15",
-          height: "2rem",
-          width: "2rem",
-        }}
-        color="#726c6c"
-      />
-    );
-  }
+  const [swiperRef, setSwiperRef] = useState();
+  const { screenWidth } = useScreenSizeContext();
 
   const mock = [
     {
@@ -110,24 +52,179 @@ export default function Home() {
     },
   ];
 
+  const handlePrevious = useCallback(() => {
+    swiperRef?.slidePrev();
+  }, [swiperRef]);
+
+  const handleNext = useCallback(() => {
+    swiperRef?.slideNext();
+  }, [swiperRef]);
+
   return (
     <>
       <Header />
-      <div className={container}>
-        <div
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "4rem",
+        }}
+      >
+        <span
           style={{
-            width: "70%",
+            fontSize: "1.5rem",
+            fontFamily: "Roboto",
+            textAlign: "start",
+            marginBottom: "3rem",
           }}
         >
-          <Slider {...settings}>
+          Qual o prato para hoje?
+        </span>
+        <div
+          style={{
+            width: "90%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            <IconButton onClick={handlePrevious}>
+              <CaretCircleLeft
+                style={{
+                  zIndex: "15",
+                  height: "2rem",
+                  width: "2rem",
+                }}
+                color="#726c6c"
+              />
+            </IconButton>
+          </div>
+          <Swiper
+            cssMode={true}
+            navigation={true}
+            mousewheel={true}
+            slidesPerView={
+              screenWidth >= 1900
+                ? 9
+                : screenWidth >= 1250
+                ? 7
+                : screenWidth >= 900
+                ? 5
+                : 4
+            }
+            loop={true}
+            onSwiper={setSwiperRef}
+            className="mySwiper"
+          >
             {mock.map((categoria) => (
-              <ThemeProvider theme={theme}>
-                <Button color="primary" variant="contained" className={card}>
-                  {categoria.nome}
-                </Button>
-              </ThemeProvider>
+              <SwiperSlide>
+                <ThemeProvider theme={theme}>
+                  <Button
+                    size="medium"
+                    color="primary"
+                    variant="contained"
+                    style={{
+                      width: "7rem",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {categoria.nome}
+                  </Button>
+                </ThemeProvider>
+              </SwiperSlide>
             ))}
-          </Slider>
+          </Swiper>
+          <div>
+            <IconButton onClick={handleNext}>
+              <CaretCircleRight
+                style={{
+                  zIndex: "15",
+                  height: "2rem",
+                  width: "2rem",
+                }}
+                color="#726c6c"
+              />
+            </IconButton>
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            marginLeft: "6rem",
+            marginTop: "4rem",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "1.5rem",
+              fontFamily: "Roboto",
+              textAlign: "start",
+              margin: "1rem 0",
+            }}
+          >
+            Todos os restaurantes
+          </span>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            width: "90%",
+            justifyContent: "space-between",
+          }}
+        >
+          <div
+            style={{
+              width: "7rem",
+              height: "6rem",
+              backgroundColor: "red",
+              borderRadius: ".3rem",
+              padding: "1rem",
+              boxShadow: "0px 0px 5px 0px rgba(77, 73, 73, 0.75)",
+            }}
+          >
+            restaurante 01
+          </div>
+          <div
+            style={{
+              width: "5rem",
+              height: "4rem",
+              backgroundColor: "red",
+            }}
+          >
+            restaurante 01
+          </div>
+          <div
+            style={{
+              width: "5rem",
+              height: "4rem",
+              backgroundColor: "red",
+            }}
+          >
+            restaurante 01
+          </div>
+          <div
+            style={{
+              width: "5rem",
+              height: "4rem",
+              backgroundColor: "red",
+            }}
+          >
+            restaurante 01
+          </div>
+          <div
+            style={{
+              width: "5rem",
+              height: "4rem",
+              backgroundColor: "red",
+            }}
+          >
+            restaurante 01
+          </div>
         </div>
       </div>
     </>
