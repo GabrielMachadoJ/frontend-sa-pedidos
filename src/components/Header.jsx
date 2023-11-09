@@ -19,6 +19,100 @@ import {
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../service/api";
+
+const mock = [
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 10",
+    id: 47,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 12",
+    id: 49,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 14",
+    id: 51,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 16",
+    id: 53,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 18",
+    id: 55,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 2",
+    id: 39,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 20",
+    id: 57,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 22",
+    id: 59,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 24",
+    id: 61,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 26",
+    id: 63,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 28",
+    id: 65,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 30",
+    id: 67,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 32",
+    id: 69,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 34",
+    id: 71,
+    status: "A",
+  },
+  {
+    tipo: "RESTAURANTE",
+    nome: "Categoria 36",
+    id: 73,
+    status: "A",
+  },
+];
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -36,6 +130,23 @@ export default function Header() {
     navigate("/");
   };
 
+  // const teste = async () => {
+  //   try {
+  //     const resp = await api.get(
+  //       "/restaurantes?nome=rest&id-categoria=239&pagina=0",
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJwYXBlbCI6IkNMSUVOVEUiLCJzdWIiOiJ1c3VhcmlvNi5jbGllbnRlIiwiaWF0IjoxNjk5NDgzOTE3LCJleHAiOjE2OTk0ODU3MTd9.aGQKsUlc1SQh_dG-DM8M-i_PIFj_X3wruckeKGKbuhc`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log(resp);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   return (
     <div
       style={{
@@ -48,7 +159,10 @@ export default function Header() {
         alignItems: "center",
       }}
     >
-      <IconButton style={{ borderRadius: 0, padding: 0 }}>
+      <IconButton
+        style={{ borderRadius: 0, padding: 0 }}
+        // onClick={() => teste()}
+      >
         <div
           style={{
             display: "flex",
