@@ -130,22 +130,17 @@ export default function Header() {
     navigate("/");
   };
 
-  // const teste = async () => {
-  //   try {
-  //     const resp = await api.get(
-  //       "/restaurantes?nome=rest&id-categoria=239&pagina=0",
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJwYXBlbCI6IkNMSUVOVEUiLCJzdWIiOiJ1c3VhcmlvNi5jbGllbnRlIiwiaWF0IjoxNjk5NDgzOTE3LCJleHAiOjE2OTk0ODU3MTd9.aGQKsUlc1SQh_dG-DM8M-i_PIFj_X3wruckeKGKbuhc`,
-  //         },
-  //       }
-  //     );
+  const teste = async () => {
+    try {
+      const resp = await api.get(
+        "/restaurantes?nome=rest&id-categoria=239&pagina=0"
+      );
 
-  //     console.log(resp);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+      console.log(resp);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div
@@ -161,7 +156,7 @@ export default function Header() {
     >
       <IconButton
         style={{ borderRadius: 0, padding: 0 }}
-        // onClick={() => teste()}
+        onClick={() => teste()}
       >
         <div
           style={{

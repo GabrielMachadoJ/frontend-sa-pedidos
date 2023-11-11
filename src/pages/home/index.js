@@ -8,6 +8,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import { useScreenSizeContext } from "../../context/useScreenSize";
+import RestaurantCard from "../../components/RestaurantCard";
 
 const theme = createTheme({
   palette: {
@@ -120,8 +121,8 @@ export default function Home() {
             onSwiper={setSwiperRef}
             className="mySwiper"
           >
-            {mock.map((categoria) => (
-              <SwiperSlide>
+            {mock.map((categoria, index) => (
+              <SwiperSlide key={index}>
                 <ThemeProvider theme={theme}>
                   <Button
                     size="medium"
@@ -177,54 +178,7 @@ export default function Home() {
             justifyContent: "space-between",
           }}
         >
-          <div
-            style={{
-              width: "7rem",
-              height: "6rem",
-              backgroundColor: "red",
-              borderRadius: ".3rem",
-              padding: "1rem",
-              boxShadow: "0px 0px 5px 0px rgba(77, 73, 73, 0.75)",
-            }}
-          >
-            restaurante 01
-          </div>
-          <div
-            style={{
-              width: "5rem",
-              height: "4rem",
-              backgroundColor: "red",
-            }}
-          >
-            restaurante 01
-          </div>
-          <div
-            style={{
-              width: "5rem",
-              height: "4rem",
-              backgroundColor: "red",
-            }}
-          >
-            restaurante 01
-          </div>
-          <div
-            style={{
-              width: "5rem",
-              height: "4rem",
-              backgroundColor: "red",
-            }}
-          >
-            restaurante 01
-          </div>
-          <div
-            style={{
-              width: "5rem",
-              height: "4rem",
-              backgroundColor: "red",
-            }}
-          >
-            restaurante 01
-          </div>
+          <RestaurantCard />
         </div>
       </div>
     </>
