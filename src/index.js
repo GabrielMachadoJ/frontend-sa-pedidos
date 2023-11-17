@@ -5,9 +5,7 @@ import "./index.css";
 import { ScreenSizeProvider } from "./context/useScreenSize";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <ScreenSizeProvider>
-      <App />
-    </ScreenSizeProvider>
-  </React.StrictMode>
+  <ScreenSizeProvider>
+    <App />
+  </ScreenSizeProvider>
 );

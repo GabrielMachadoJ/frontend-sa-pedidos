@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { CaretCircleRight, CaretCircleLeft } from "@phosphor-icons/react";
 import { Button, IconButton, ThemeProvider, createTheme } from "@mui/material";
@@ -9,6 +9,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { useScreenSizeContext } from "../../context/useScreenSize";
 import RestaurantCard from "../../components/RestaurantCard";
+import { Link } from "react-router-dom";
+import { api } from "../../service/api";
 
 const theme = createTheme({
   palette: {
@@ -19,6 +21,10 @@ const theme = createTheme({
 export default function Home() {
   const [swiperRef, setSwiperRef] = useState();
   const { screenWidth } = useScreenSizeContext();
+  const [restaurantes, setRestaurantes] = useState([]);
+  const [restaurantesToSend, setRestaurantesToSend] = useState([]);
+
+  const [imageData, setImageData] = useState(null);
 
   const mock = [
     {
@@ -53,6 +59,16 @@ export default function Home() {
     },
   ];
 
+  useEffect(() => {
+    getRestaurants();
+  }, []);
+
+  useEffect(() => {
+    if (restaurantes.length > 0) {
+      getImagensRestaurantes();
+    }
+  }, [restaurantes]);
+
   const handlePrevious = useCallback(() => {
     swiperRef?.slidePrev();
   }, [swiperRef]);
@@ -61,6 +77,52 @@ export default function Home() {
     swiperRef?.slideNext();
   }, [swiperRef]);
 
+  const getRestaurants = async () => {
+    try {
+      const response = await api.get(
+        "/restaurantes?nome=rest&id-categoria=239&pagina=0"
+      );
+
+      const restaurants = response.data?.listagem;
+
+      if (restaurants.length > 0) {
+        setRestaurantes(restaurants);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getImagensRestaurantes = async () => {
+    try {
+      const promises = restaurantes.map(async (restaurante) => {
+        if (restaurante.status === "A") {
+          const response = await api.get(
+            `/restaurantes/id/${restaurante.id}/foto`,
+            {
+              responseType: "arraybuffer",
+            }
+          );
+
+          const arrayBufferView = new Uint8Array(response.data);
+          const blob = new Blob([arrayBufferView], { type: "image/png" });
+          const imageUrl = URL.createObjectURL(blob);
+
+          return {
+            ...restaurante,
+            url_imagem: imageUrl,
+          };
+        }
+
+        return restaurante;
+      });
+
+      const updatedRestaurantes = await Promise.all(promises);
+      setRestaurantesToSend(updatedRestaurantes);
+    } catch (error) {
+      // Trate os erros aqui
+    }
+  };
   return (
     <>
       <Header />
@@ -178,7 +240,7 @@ export default function Home() {
             justifyContent: "space-between",
           }}
         >
-          <RestaurantCard />
+          <RestaurantCard restaurantes={restaurantesToSend} />
         </div>
       </div>
     </>

@@ -19,7 +19,6 @@ import {
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../service/api";
 
 const mock = [
   {
@@ -130,16 +129,8 @@ export default function Header() {
     navigate("/");
   };
 
-  const teste = async () => {
-    try {
-      const resp = await api.get(
-        "/restaurantes?nome=rest&id-categoria=239&pagina=0"
-      );
-
-      console.log(resp);
-    } catch (error) {
-      console.log(error);
-    }
+  const handleGoToHome = () => {
+    navigate("/home");
   };
 
   return (
@@ -156,7 +147,7 @@ export default function Header() {
     >
       <IconButton
         style={{ borderRadius: 0, padding: 0 }}
-        onClick={() => teste()}
+        onClick={() => handleGoToHome()}
       >
         <div
           style={{
