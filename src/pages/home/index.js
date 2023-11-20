@@ -174,10 +174,10 @@ export default function Home() {
               screenWidth >= 1900
                 ? 9
                 : screenWidth >= 1250
-                ? 7
-                : screenWidth >= 900
-                ? 5
-                : 4
+                  ? 7
+                  : screenWidth >= 900
+                    ? 5
+                    : 4
             }
             loop={true}
             onSwiper={setSwiperRef}
