@@ -3,8 +3,10 @@ import Header from "../../components/Header";
 import { useEffect, useState } from "react";
 import { api } from "../../service/api";
 import {
+  Backdrop,
   Button,
   Card,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -25,25 +27,35 @@ export default function Restaurant() {
   const [opcaoSelecionada, setOpcaoSelecionada] = useState({});
   const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(1);
   const { handleSetItensPedido, handleChangeIdCardapio } = usePedidoContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [response, setResponse] = useState(null);
 
   useEffect(() => {
     const getCardapioRestaurante = async () => {
-      const resp = await api.get(`/cardapios?id-restaurante=${idRestaurante}`);
-      const responseData = resp.data.listagem[0];
-      handleChangeIdCardapio(responseData?.id);
-      setResponse(resp);
-      const opSecao = {};
-      responseData?.opcoes?.forEach((opcao) => {
-        const nomeSecao = opcao.secao.nome;
-        if (!opSecao[nomeSecao]) {
-          opSecao[nomeSecao] = [];
-        }
+      try {
+        setIsLoading(true);
+        const resp = await api.get(
+          `/cardapios?id-restaurante=${idRestaurante}`
+        );
+        const responseData = resp.data.listagem[0];
+        handleChangeIdCardapio(responseData?.id);
+        setResponse(resp);
+        const opSecao = {};
+        responseData?.opcoes?.forEach((opcao) => {
+          const nomeSecao = opcao.secao.nome;
+          if (!opSecao[nomeSecao]) {
+            opSecao[nomeSecao] = [];
+          }
 
-        opSecao[nomeSecao].push(opcao);
-        setOpcoesPorSecao(opSecao);
-      });
+          opSecao[nomeSecao].push(opcao);
+          setOpcoesPorSecao(opSecao);
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     getCardapioRestaurante();
@@ -73,7 +85,6 @@ export default function Restaurant() {
       <div
         style={{
           display: "flex",
-          width: "100dvw",
           padding: ".5rem",
           marginTop: "1rem",
         }}
@@ -95,7 +106,7 @@ export default function Restaurant() {
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    width: "49vw",
+                    width: "47.5vw",
                     height: "10rem",
                     border: "1px solid #e4d9d97a",
                     padding: ".8rem",
@@ -152,7 +163,6 @@ export default function Restaurant() {
           backgroundImage: `url(${url})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          width: "100vw",
           height: "18rem",
           borderBottom: "1px solid #b4abab",
         }}
@@ -209,7 +219,7 @@ export default function Restaurant() {
               display: "flex",
             }}
           >
-            <div style={{ width: "10rem", marginRight: "4rem" }}>
+            <div style={{ width: "10rem", marginRight: ".6rem" }}>
               <img
                 src={OpcaoCardapioImg}
                 alt="Imagem Redonda"
@@ -272,6 +282,8 @@ export default function Restaurant() {
                       opcao: opcaoSelecionada,
                       qtd: quantidadeSelecionada,
                     });
+                    handleCloseModal();
+                    setQuantidadeSelecionada(1);
                   }}
                 >
                   Adicionar &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; R${" "}
@@ -284,6 +296,13 @@ export default function Restaurant() {
           </div>
         </DialogContent>
       </Dialog>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isLoading}
+        onClick={() => setIsLoading(false)}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 }

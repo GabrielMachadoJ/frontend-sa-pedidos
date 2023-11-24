@@ -92,7 +92,7 @@ export default function Home() {
     setIsLoading(true);
     try {
       const response = await api.get(
-        `/restaurantes?nome=cardapio&id-categoria=239&pagina=${page}`
+        `/restaurantes?nome=&id-categoria=239&pagina=${page}`
       );
 
       const totalDePaginas = response.data?.totalDePaginas;
