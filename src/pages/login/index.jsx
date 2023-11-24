@@ -2,9 +2,22 @@ import { Button, Card, TextField } from "@mui/material";
 import imgLogin from "../../assets/img-login.png";
 import { Link } from "react-router-dom";
 import { useScreenSizeContext } from "../../context/useScreenSize";
+import { apiKauan } from "../../service/api";
+import { useState } from "react";
 
 export default function Login() {
   const { screenWidth } = useScreenSizeContext();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async () => {
+    const body = JSON.stringify({
+      email,
+      senha: password,
+    });
+    const resp = await apiKauan.post("/auth", body);
+    console.log(resp);
+  };
 
   return (
     <div
@@ -95,7 +108,7 @@ export default function Login() {
           </h2>
           <TextField
             fullWidth
-            id="user"
+            id="email"
             label="Usuário"
             variant="outlined"
             InputLabelProps={{
@@ -105,6 +118,7 @@ export default function Login() {
               marginBottom: "1rem",
               backgroundColor: "#e0e9f383",
             }}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             fullWidth
@@ -119,6 +133,7 @@ export default function Login() {
               marginBottom: "2rem",
               backgroundColor: "#e0e9f383",
             }}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <Link to={"/home"}>
             <Button
@@ -128,6 +143,7 @@ export default function Login() {
                 backgroundColor: "#FF2A00",
                 padding: ".5rem 2rem",
               }}
+              onClick={() => handleLogin()}
             >
               Entrar
             </Button>

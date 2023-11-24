@@ -1,7 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { CaretCircleRight, CaretCircleLeft } from "@phosphor-icons/react";
-import { Button, IconButton, ThemeProvider, createTheme } from "@mui/material";
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  IconButton,
+  Pagination,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -23,6 +31,9 @@ export default function Home() {
   const { screenWidth } = useScreenSizeContext();
   const [restaurantes, setRestaurantes] = useState([]);
   const [restaurantesToSend, setRestaurantesToSend] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [imageData, setImageData] = useState(null);
 
@@ -61,7 +72,7 @@ export default function Home() {
 
   useEffect(() => {
     getRestaurants();
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     if (restaurantes.length > 0) {
@@ -78,10 +89,14 @@ export default function Home() {
   }, [swiperRef]);
 
   const getRestaurants = async () => {
+    setIsLoading(true);
     try {
       const response = await api.get(
-        "/restaurantes?nome=rest&id-categoria=239&pagina=0"
+        `/restaurantes?nome=cardapio&id-categoria=239&pagina=${page}`
       );
+
+      const totalDePaginas = response.data?.totalDePaginas;
+      setTotalPage(totalDePaginas);
 
       const restaurants = response.data?.listagem;
 
@@ -90,6 +105,8 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -174,10 +191,10 @@ export default function Home() {
               screenWidth >= 1900
                 ? 9
                 : screenWidth >= 1250
-                  ? 7
-                  : screenWidth >= 900
-                    ? 5
-                    : 4
+                ? 7
+                : screenWidth >= 900
+                ? 5
+                : 4
             }
             loop={true}
             onSwiper={setSwiperRef}
@@ -217,8 +234,6 @@ export default function Home() {
         <div
           style={{
             display: "flex",
-            width: "100%",
-            marginLeft: "6rem",
             marginTop: "4rem",
           }}
         >
@@ -230,7 +245,22 @@ export default function Home() {
               margin: "1rem 0",
             }}
           >
-            Todos os restaurantes
+            <div
+              style={{
+                display: "flex",
+                width: "85vw",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              Todos os restaurantes{" "}
+              <Pagination
+                showFirstButton={false}
+                count={totalPage}
+                variant="outlined"
+                onChange={(e, value) => setPage(Number(value) - 1)}
+              />
+            </div>
           </span>
         </div>
         <div
@@ -243,6 +273,13 @@ export default function Home() {
           <RestaurantCard restaurantes={restaurantesToSend} />
         </div>
       </div>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isLoading}
+        onClick={() => setIsLoading(false)}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 }

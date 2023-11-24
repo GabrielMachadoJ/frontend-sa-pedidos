@@ -9,7 +9,6 @@ export default function RestaurantCard(params) {
 
   useEffect(() => {
     if (restauranteData.length > 0) {
-      console.log(restauranteData);
       setRestaurantes(restauranteData);
     }
   }, [restauranteData]);
