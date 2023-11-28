@@ -17,7 +17,6 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { useScreenSizeContext } from "../../context/useScreenSize";
 import RestaurantCard from "../../components/RestaurantCard";
-import { Link } from "react-router-dom";
 import { api } from "../../service/api";
 
 const theme = createTheme({
@@ -34,8 +33,6 @@ export default function Home() {
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
-  const [imageData, setImageData] = useState(null);
 
   const mock = [
     {
@@ -194,7 +191,9 @@ export default function Home() {
                 ? 7
                 : screenWidth >= 900
                 ? 5
-                : 4
+                : screenWidth <= 550
+                ? 2
+                : 3
             }
             loop={true}
             onSwiper={setSwiperRef}

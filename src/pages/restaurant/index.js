@@ -31,6 +31,9 @@ export default function Restaurant() {
 
   const [response, setResponse] = useState(null);
 
+  const img =
+    "https://cardapios-mktplace-api-production.up.railway.app/opcoes/${opcao.id}/foto";
+
   useEffect(() => {
     const getCardapioRestaurante = async () => {
       try {
@@ -137,7 +140,7 @@ export default function Restaurant() {
                     }}
                   >
                     <img
-                      src={OpcaoCardapioImg}
+                      src={`https://cardapios-mktplace-api-production.up.railway.app/opcoes/id/${opcao.id}/foto`}
                       alt="Imagem Redonda"
                       style={{
                         width: "100%",
@@ -221,7 +224,7 @@ export default function Restaurant() {
           >
             <div style={{ width: "10rem", marginRight: ".6rem" }}>
               <img
-                src={OpcaoCardapioImg}
+                src={`https://cardapios-mktplace-api-production.up.railway.app/opcoes/id/${opcaoSelecionada.id}/foto`}
                 alt="Imagem Redonda"
                 style={{
                   width: "100%",

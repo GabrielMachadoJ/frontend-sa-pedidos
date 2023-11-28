@@ -15,8 +15,7 @@ export default function Login() {
       email,
       senha: password,
     });
-    const resp = await apiKauan.post("/auth", body);
-    console.log(resp);
+    // const resp = await apiKauan.post("/auth", body);
   };
 
   return (
@@ -40,7 +39,7 @@ export default function Login() {
       >
         <Card
           style={{
-            display: "flex",
+            display: screenWidth <= 400 ? "none" : "flex",
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
@@ -94,7 +93,7 @@ export default function Login() {
             justifyContent: "center",
             alignItems: "center",
             padding: "1rem",
-            width: "50%",
+            width: screenWidth <= 400 ? "100%" : "50%",
           }}
         >
           <h2
