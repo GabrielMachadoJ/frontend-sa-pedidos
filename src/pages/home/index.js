@@ -92,7 +92,7 @@ export default function Home() {
     setIsLoading(true);
     try {
       const response = await apiLaudelino.get(`/restaurantes?pagina=${page}`);
-
+      
       const totalDePaginas = response.data?.totalDePaginas;
       setTotalPage(totalDePaginas);
 

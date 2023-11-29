@@ -21,7 +21,8 @@ import { usePedidoContext } from "../../context/usePedido";
 export default function Restaurant() {
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
-  const { url, name } = location.state;
+  console.log(location.state);
+  const { url, name, descricaoRestaurante } = location.state;
   const [opcoesPorSecao, setOpcoesPorSecao] = useState({});
   const [openModalOpcao, setOpenModalOpcao] = useState(false);
   const [opcaoSelecionada, setOpcaoSelecionada] = useState({});
@@ -47,19 +48,30 @@ export default function Restaurant() {
           if (!opSecao[nomeSecao]) {
             opSecao[nomeSecao] = [];
           }
-
-          opSecao[nomeSecao].push(opcao);
+          
+          const opcoesComDescricao = await Promise.all(
+            responseData?.opcoes?.map(async (opcao) => {
+              const nomeSecao = opcao.secao.nome;
+              if (!opSecao[nomeSecao]) {
+                opSecao[nomeSecao] = [];
+              }
+              const descricaoResp = await api.get(`/opcoes/id/${opcao.id}`);
+              const descricao = descricaoResp.data?.descricao || '';
+              const opcaoComDescricao = { ...opcao, descricao };
+              opSecao[nomeSecao].push(opcaoComDescricao);
+              return opcaoComDescricao;
+            })
+          );
           setOpcoesPorSecao(opSecao);
-        });
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
-    getCardapioRestaurante();
-  }, [location]);
+      getCardapioRestaurante();
+    }, [idRestaurante]);
 
   const handleCloseModal = () => {
     setOpenModalOpcao(false);
@@ -84,32 +96,39 @@ export default function Restaurant() {
     return (
       <div
         style={{
-          display: "flex",
-          padding: ".5rem",
-          marginTop: "1rem",
+          margin: "4rem 6rem",
         }}
       >
-        <div>
-          <h2
-            style={{
-              fontSize: "1.6rem",
-              fontWeight: 400,
-              marginBottom: "1.2rem",
-            }}
-          >
-            {secaoNome}.
-          </h2>
-          <Grid container spacing={2}>
-            {opcoes.map((opcao) => (
-              <Grid key={opcao.id} item xs={12} sm={6} md={6} lg={6}>
+        <h2
+          style={{
+            fontSize: "1.6rem",
+            fontWeight: 400,
+            marginBottom: "1.2rem",
+            color: "red"
+          }}
+        >
+          {secaoNome}.
+        </h2>
+        <Grid container spacing={2} style={{ marginLeft: "-1rem", marginRight: "-1rem" }}>
+          {opcoes.map((opcao) => (
+            <Grid key={opcao.id} item xs={12} sm={6} md={6} lg={6}>
+              <div
+                style={{
+                  border: "2px solid #e4d9d97a",
+                  marginBottom: "1rem", // Adicionei um espaçamento inferior
+                  boxSizing: "border-box",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center" // Centraliza os cards horizontalmente
+                }}
+              >
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    width: "47.5vw",
                     height: "10rem",
-                    border: "1px solid #e4d9d97a",
                     padding: ".8rem",
+                    boxSizing: "border-box"
                   }}
                   onClick={() => handleAddOpcao(opcao)}
                 >
@@ -124,7 +143,7 @@ export default function Restaurant() {
                       {opcao.nome}
                     </h2>
                     <p style={{ fontSize: ".9rem", fontWeight: 300 }}>
-                      Descrição aqui
+                      {opcao.descricao}
                     </p>
                     <h2 style={{ fontSize: "1.2rem", fontWeight: 400 }}>
                       A partir de R$ {`${opcao.preco}`.replace(".", ",")}
@@ -132,7 +151,7 @@ export default function Restaurant() {
                   </div>
                   <div
                     style={{
-                      borderLeft: "1px solid #e4d9d97a",
+                      borderLeft: "2px solid #e4d9d97a",
                       width: "10rem",
                     }}
                   >
@@ -142,15 +161,15 @@ export default function Restaurant() {
                       style={{
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover", // Isso garante que a imagem cubra completamente a área da div circular
+                        objectFit: "cover",
                       }}
                     />
                   </div>
                 </div>
-              </Grid>
-            ))}
-          </Grid>
-        </div>
+              </div>
+            </Grid>
+          ))}
+        </Grid>
       </div>
     );
   };
@@ -170,18 +189,19 @@ export default function Restaurant() {
 
       <div
         style={{
-          margin: "2rem 0",
+          margin: "3rem 0",
           display: "flex",
           alignItems: "center",
         }}
       >
         <div
-          style={{
+           style={{
+            margin: "1rem 1rem 0rem 6rem", // Margem: topo direita inferior esquerda
             borderRadius: "50%",
-            overflow: "hidden", // Garante que a imagem não ultrapasse os limites da div circular
-            width: "10rem",
-            height: "10rem", // Ajuste conforme necessário
-            border: "1px solid #ebe2e2",
+            overflow: "hidden",
+            width: "12rem",
+            height: "12rem",
+            border: "2px solid #ebe2e2",
           }}
         >
           <img
@@ -194,7 +214,8 @@ export default function Restaurant() {
             }}
           />
         </div>
-        <span style={{ fontSize: "1.5rem" }}>{name}</span>
+        <span style={{ fontSize: "1.8rem", fontWeight: "bold" }}>{name}</span>
+        <span style={{ fontSize: "1rem" }}> {descricaoRestaurante} </span>
       </div>
       {response
         ? Object.keys(opcoesPorSecao).map((secaoNome) => (
