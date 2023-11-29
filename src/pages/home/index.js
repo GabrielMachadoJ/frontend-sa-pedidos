@@ -30,54 +30,19 @@ export default function Home() {
   const [swiperRef, setSwiperRef] = useState();
   const { screenWidth } = useScreenSizeContext();
   const [restaurantes, setRestaurantes] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const mock = [
-    {
-      nome: "JAPONESA",
-    },
-    {
-      nome: "HAMBURGUER",
-    },
-    {
-      nome: "PIZZA",
-    },
-    {
-      nome: "FITNESS",
-    },
-    {
-      nome: "MARMITA",
-    },
-    {
-      nome: "CAFETERIA",
-    },
-    {
-      nome: "FAST FOOD",
-    },
-    {
-      nome: "FOOD TRUCK",
-    },
-    {
-      nome: "PUB",
-    },
-    {
-      nome: "BRASILEIRA",
-    },
-  ];
-
-  // useEffect(() => {
-  //   const paginaAtual = Number(location.search.split("=")[1]);
-  //   navigate(`/home?page=${paginaAtual}`);
-  //   // window.location.reload();
-  //   window.history.replaceState({}, "", `/home?page=${paginaAtual}`);
-  // }, [page]);
-
   useEffect(() => {
     getRestaurants();
+  }, [page]);
+
+  useEffect(() => {
+    getCategorias();
   }, [page]);
 
   const handlePrevious = useCallback(() => {
@@ -87,6 +52,22 @@ export default function Home() {
   const handleNext = useCallback(() => {
     swiperRef?.slideNext();
   }, [swiperRef]);
+
+  const getCategorias = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiLaudelino.get(`/categorias?status=A&tipo=RESTAURANTE`);
+      const categorias = response.data?.listagem;
+
+      if (categorias.length > 0) {
+        setCategorias(categorias);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getRestaurants = async () => {
     setIsLoading(true);
@@ -170,7 +151,7 @@ export default function Home() {
             onSwiper={setSwiperRef}
             className="mySwiper"
           >
-            {mock.map((categoria, index) => (
+            {categorias.map((categoria, index) => (
               <SwiperSlide key={index}>
                 <ThemeProvider theme={theme}>
                   <Button
@@ -178,7 +159,7 @@ export default function Home() {
                     color="primary"
                     variant="contained"
                     style={{
-                      width: "7rem",
+                      width: "13rem",
                       whiteSpace: "nowrap",
                     }}
                   >
