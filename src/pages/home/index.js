@@ -69,6 +69,22 @@ export default function Home() {
     }
   };
 
+  const handleCategoriaClick = async (categoriaId) => {
+    setIsLoading(true);
+    try {
+      const response = await apiLaudelino.get(`/restaurantes?id-categoria=${categoriaId}`);
+      const restaurants = response.data?.listagem;
+
+      if (restaurants.length > 0) {
+        setRestaurantes(restaurants);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getRestaurants = async () => {
     setIsLoading(true);
     try {
@@ -154,17 +170,18 @@ export default function Home() {
             {categorias.map((categoria, index) => (
               <SwiperSlide key={index}>
                 <ThemeProvider theme={theme}>
-                  <Button
-                    size="medium"
-                    color="primary"
-                    variant="contained"
-                    style={{
-                      width: "13rem",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {categoria.nome}
-                  </Button>
+                <Button
+                  size="medium"
+                  color="primary"
+                  variant="contained"
+                  style={{
+                    width: "13rem",
+                    whiteSpace: "nowrap",
+                  }}
+                  onClick={() => handleCategoriaClick(categoria.id)}
+                >
+                  {categoria.nome}
+              </Button>
                 </ThemeProvider>
               </SwiperSlide>
             ))}
