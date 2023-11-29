@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import Header from "../../components/Header";
 import { useEffect, useState } from "react";
-import { api } from "../../service/api";
+import { apiLaudelino } from "../../service/api";
 import {
   Backdrop,
   Button,
@@ -31,14 +31,11 @@ export default function Restaurant() {
 
   const [response, setResponse] = useState(null);
 
-  const img =
-    "https://cardapios-mktplace-api-production.up.railway.app/opcoes/${opcao.id}/foto";
-
   useEffect(() => {
     const getCardapioRestaurante = async () => {
       try {
         setIsLoading(true);
-        const resp = await api.get(
+        const resp = await apiLaudelino.get(
           `/cardapios?id-restaurante=${idRestaurante}`
         );
         const responseData = resp.data.listagem[0];
@@ -163,7 +160,7 @@ export default function Restaurant() {
       <Header />
       <div
         style={{
-          backgroundImage: `url(${url})`,
+          backgroundImage: `url(https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${idRestaurante}/foto)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "18rem",
@@ -188,7 +185,7 @@ export default function Restaurant() {
           }}
         >
           <img
-            src={url}
+            src={`https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${idRestaurante}/foto`}
             alt="Imagem Redonda"
             style={{
               width: "100%",

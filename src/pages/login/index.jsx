@@ -134,7 +134,7 @@ export default function Login() {
             }}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Link to={"/home"}>
+          <Link to={"/home?page=0"}>
             <Button
               variant="contained"
               size="large"

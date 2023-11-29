@@ -28,7 +28,7 @@ import {
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { usePedidoContext } from "../context/usePedido";
-import { api } from "../service/api";
+import { apiLaudelino } from "../service/api";
 import { useScreenSizeContext } from "../context/useScreenSize";
 
 export default function Header() {
@@ -78,7 +78,7 @@ export default function Header() {
         }),
       };
 
-      await api.post("/pedidos", body);
+      await apiLaudelino.post("/pedidos", body);
     } catch (error) {
       console.log(error);
     }

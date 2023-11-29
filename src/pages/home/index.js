@@ -17,7 +17,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { useScreenSizeContext } from "../../context/useScreenSize";
 import RestaurantCard from "../../components/RestaurantCard";
-import { api } from "../../service/api";
+import { apiLaudelino } from "../../service/api";
+import { redirect, useLocation, useNavigate } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -29,10 +30,11 @@ export default function Home() {
   const [swiperRef, setSwiperRef] = useState();
   const { screenWidth } = useScreenSizeContext();
   const [restaurantes, setRestaurantes] = useState([]);
-  const [restaurantesToSend, setRestaurantesToSend] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const mock = [
     {
@@ -67,15 +69,16 @@ export default function Home() {
     },
   ];
 
+  // useEffect(() => {
+  //   const paginaAtual = Number(location.search.split("=")[1]);
+  //   navigate(`/home?page=${paginaAtual}`);
+  //   // window.location.reload();
+  //   window.history.replaceState({}, "", `/home?page=${paginaAtual}`);
+  // }, [page]);
+
   useEffect(() => {
     getRestaurants();
   }, [page]);
-
-  useEffect(() => {
-    if (restaurantes.length > 0) {
-      getImagensRestaurantes();
-    }
-  }, [restaurantes]);
 
   const handlePrevious = useCallback(() => {
     swiperRef?.slidePrev();
@@ -88,9 +91,7 @@ export default function Home() {
   const getRestaurants = async () => {
     setIsLoading(true);
     try {
-      const response = await api.get(
-        `/restaurantes?nome=&id-categoria=239&pagina=${page}`
-      );
+      const response = await apiLaudelino.get(`/restaurantes?pagina=${page}`);
 
       const totalDePaginas = response.data?.totalDePaginas;
       setTotalPage(totalDePaginas);
@@ -107,36 +108,6 @@ export default function Home() {
     }
   };
 
-  const getImagensRestaurantes = async () => {
-    try {
-      const promises = restaurantes.map(async (restaurante) => {
-        if (restaurante.status === "A") {
-          const response = await api.get(
-            `/restaurantes/id/${restaurante.id}/foto`,
-            {
-              responseType: "arraybuffer",
-            }
-          );
-
-          const arrayBufferView = new Uint8Array(response.data);
-          const blob = new Blob([arrayBufferView], { type: "image/png" });
-          const imageUrl = URL.createObjectURL(blob);
-
-          return {
-            ...restaurante,
-            url_imagem: imageUrl,
-          };
-        }
-
-        return restaurante;
-      });
-
-      const updatedRestaurantes = await Promise.all(promises);
-      setRestaurantesToSend(updatedRestaurantes);
-    } catch (error) {
-      // Trate os erros aqui
-    }
-  };
   return (
     <>
       <Header />
@@ -269,7 +240,7 @@ export default function Home() {
             justifyContent: "space-between",
           }}
         >
-          <RestaurantCard restaurantes={restaurantesToSend} />
+          <RestaurantCard restaurantes={restaurantes} />
         </div>
       </div>
       <Backdrop
