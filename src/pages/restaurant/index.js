@@ -21,7 +21,6 @@ import { usePedidoContext } from "../../context/usePedido";
 export default function Restaurant() {
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
-  console.log(location.state);
   const { url, name, descricaoRestaurante } = location.state;
   const [opcoesPorSecao, setOpcoesPorSecao] = useState({});
   const [openModalOpcao, setOpenModalOpcao] = useState(false);
@@ -36,43 +35,46 @@ export default function Restaurant() {
     const getCardapioRestaurante = async () => {
       try {
         setIsLoading(true);
-        const resp = await apiLaudelino.get(
-          `/cardapios?id-restaurante=${idRestaurante}`
-        );
+        const resp = await apiLaudelino.get(`/cardapios?id-restaurante=${idRestaurante}`);
         const responseData = resp.data.listagem[0];
         handleChangeIdCardapio(responseData?.id);
         setResponse(resp);
+  
         const opSecao = {};
-        responseData?.opcoes?.forEach((opcao) => {
+        const opcoesPromises = [];
+  
+        for (const opcao of responseData?.opcoes || []) {
           const nomeSecao = opcao.secao.nome;
+  
           if (!opSecao[nomeSecao]) {
             opSecao[nomeSecao] = [];
           }
-          
-          const opcoesComDescricao = await Promise.all(
-            responseData?.opcoes?.map(async (opcao) => {
-              const nomeSecao = opcao.secao.nome;
-              if (!opSecao[nomeSecao]) {
-                opSecao[nomeSecao] = [];
-              }
-              const descricaoResp = await api.get(`/opcoes/id/${opcao.id}`);
-              const descricao = descricaoResp.data?.descricao || '';
-              const opcaoComDescricao = { ...opcao, descricao };
-              opSecao[nomeSecao].push(opcaoComDescricao);
-              return opcaoComDescricao;
-            })
-          );
-          setOpcoesPorSecao(opSecao);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setIsLoading(false);
+  
+          const opcaoPromise = (async () => {
+            const descricaoResp = await apiLaudelino.get(`/opcoes/id/${opcao.id}`);
+            console.log(descricaoResp.data);
+            const descricao = descricaoResp.data?.descricao || '';
+            const opcaoComDescricao = { ...opcao, descricao };
+            opSecao[nomeSecao].push(opcaoComDescricao);
+            console.log(opSecao);
+            return opcaoComDescricao;
+          })();
+  
+          opcoesPromises.push(opcaoPromise);
         }
-      };
-
-      getCardapioRestaurante();
-    }, [idRestaurante]);
-
+  
+        const opcoesComDescricao = await Promise.all(opcoesPromises);
+        setOpcoesPorSecao(opSecao);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    getCardapioRestaurante();
+  }, [idRestaurante]);
+  
   const handleCloseModal = () => {
     setOpenModalOpcao(false);
   };
