@@ -4,7 +4,7 @@ import { Grid, Skeleton } from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function RestaurantCard(params) {
-  const { restaurantes: restauranteData, img } = params;
+  const { restaurantes: restauranteData } = params;
   const [restaurantes, setRestaurantes] = useState([]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function RestaurantCard(params) {
                     style={{
                       width: "100%",
                       height: "7rem",
-                      backgroundImage: `url(${rest.url_imagem ?? ""})`,
+                      backgroundImage: `url(https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${rest.id}/foto)`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       padding: ".5rem",
