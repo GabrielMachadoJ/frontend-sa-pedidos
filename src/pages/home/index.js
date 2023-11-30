@@ -26,11 +26,12 @@ const theme = createTheme({
   },
 });
 
-export default function Home() {
+const Home = () => {
   const [swiperRef, setSwiperRef] = useState();
   const { screenWidth } = useScreenSizeContext();
   const [restaurantes, setRestaurantes] = useState([]);
   const [categorias, setCategorias] = useState([]);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +40,7 @@ export default function Home() {
 
   useEffect(() => {
     getRestaurants();
-  }, [page]);
+  }, [page, categoriaSelecionada]);
 
   useEffect(() => {
     getCategorias();
@@ -69,27 +70,15 @@ export default function Home() {
     }
   };
 
-  const handleCategoriaClick = async (categoriaId) => {
-    setIsLoading(true);
-    try {
-      const response = await apiLaudelino.get(`/restaurantes?id-categoria=${categoriaId}`);
-      const restaurants = response.data?.listagem;
-
-      if (restaurants.length > 0) {
-        setRestaurantes(restaurants);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const getRestaurants = async () => {
     setIsLoading(true);
     try {
-      const response = await apiLaudelino.get(`/restaurantes?pagina=${page}`);
-      
+      let url = `/restaurantes?pagina=${page}`;
+      if (categoriaSelecionada) {
+        url += `&id-categoria=${categoriaSelecionada}`;
+      }
+
+      const response = await apiLaudelino.get(url);
       const totalDePaginas = response.data?.totalDePaginas;
       setTotalPage(totalDePaginas);
 
@@ -103,6 +92,12 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCategoriaClick = async (categoriaId) => {
+    setCategoriaSelecionada((prevCategoria) =>
+      prevCategoria === categoriaId ? null : categoriaId
+    );
   };
 
   return (
@@ -170,18 +165,18 @@ export default function Home() {
             {categorias.map((categoria, index) => (
               <SwiperSlide key={index}>
                 <ThemeProvider theme={theme}>
-                <Button
-                  size="medium"
-                  color="primary"
-                  variant="contained"
-                  style={{
-                    width: "13rem",
-                    whiteSpace: "nowrap",
-                  }}
-                  onClick={() => handleCategoriaClick(categoria.id)}
-                >
-                  {categoria.nome}
-              </Button>
+                  <Button
+                    size="medium"
+                    color={categoriaSelecionada === categoria.id ? "secondary" : "primary"}
+                    variant="contained"
+                    style={{
+                      width: "13rem",
+                      whiteSpace: "nowrap",
+                    }}
+                    onClick={() => handleCategoriaClick(categoria.id)}
+                  >
+                    {categoria.nome}
+                  </Button>
                 </ThemeProvider>
               </SwiperSlide>
             ))}
@@ -250,4 +245,6 @@ export default function Home() {
       </Backdrop>
     </>
   );
-}
+};
+
+export default Home;
