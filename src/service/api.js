@@ -4,7 +4,7 @@ export const apiLaudelino = axios.create({
   baseURL: "https://cardapios-mktplace-api-production.up.railway.app",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJwYXBlbCI6IkxPSklTVEEiLCJzdWIiOiJ1c3VhcmlvNS5sb2ppc3RhIiwiaWF0IjoxNzAxMzY0NzQ5LCJleHAiOjE3MDEzNjY1NDl9.mDfz3DEX_XUQQJ7OEk_m4coHfn-n8sTRLg0XAmR0pdw`,
+    Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJwYXBlbCI6IkxPSklTVEEiLCJzdWIiOiJ1c3VhcmlvNS5sb2ppc3RhIiwiaWF0IjoxNzAxMzY1MTk3LCJleHAiOjE3MDEzNjY5OTd9.qtDEvz06ds0-l3JSl9OTU-PkNA3WSHoRockK9RziS2A`,
   },
 });
 

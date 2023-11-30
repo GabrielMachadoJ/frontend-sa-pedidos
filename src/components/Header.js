@@ -104,6 +104,9 @@ export default function Header() {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        top: 0,
+        zIndex: 1000,
+        position: "fixed"
       }}
     >
       <IconButton

@@ -8,7 +8,22 @@ export function PedidoProvider({ children }) {
   const [idCardapio, setIdCardapio] = useState(0);
 
   const handleSetItensPedido = (opcaoAdicionada) => {
-    setItensPedido([...itensPedido, opcaoAdicionada]);
+    const opcaoExistenteIndex = itensPedido.findIndex((item) => item.opcao.id === opcaoAdicionada.opcao.id);
+
+    if (opcaoExistenteIndex !== -1) {
+      const novoItensPedido = [...itensPedido];
+
+      if (opcaoAdicionada.qtd < novoItensPedido[opcaoExistenteIndex].qtd) {
+        novoItensPedido[opcaoExistenteIndex] = { ...opcaoAdicionada };
+      } else {
+        const diferenca = opcaoAdicionada.qtd - novoItensPedido[opcaoExistenteIndex].qtd;
+        novoItensPedido[opcaoExistenteIndex] = { ...opcaoAdicionada, qtd: opcaoAdicionada.qtd + diferenca };
+      }
+
+      setItensPedido(novoItensPedido);
+    } else {
+      setItensPedido([...itensPedido, opcaoAdicionada]);
+    }
   };
 
   const handleCalculaTotalPedido = () => {
@@ -16,7 +31,6 @@ export function PedidoProvider({ children }) {
     itensPedido.forEach((item) => {
       total += item.opcao.preco * item.qtd;
     });
-    console.log(total);
     setTotalPedido(total);
   };
 
@@ -28,22 +42,21 @@ export function PedidoProvider({ children }) {
     if (itensPedido.length > 0) {
       handleCalculaTotalPedido();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itensPedido]);
 
   return (
-    <PedidoContext.Provider
-      value={{
-        handleSetItensPedido,
-        totalPedido,
-        itensPedido,
-        idCardapio,
-        handleChangeIdCardapio,
-      }}
-    >
-      {children}
-    </PedidoContext.Provider>
+    <PedidoContext.Provider value={{ handleSetItensPedido, totalPedido, itensPedido, idCardapio, handleChangeIdCardapio }}>
+    {children}
+  </PedidoContext.Provider>
   );
 }
 
-export const usePedidoContext = () => useContext(PedidoContext);
+export const usePedidoContext = () => {
+  const context = useContext(PedidoContext);
+
+  if (!context) {
+    throw new Error("usePedidoContext deve ser usado dentro de um PedidoProvider");
+  }
+
+  return context;
+}
