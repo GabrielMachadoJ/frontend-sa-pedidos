@@ -163,22 +163,24 @@ const Home = () => {
             className="mySwiper"
           >
             {categorias.map((categoria, index) => (
-              <SwiperSlide key={index}>
-                <ThemeProvider theme={theme}>
-                  <Button
-                    size="medium"
-                    color={categoriaSelecionada === categoria.id ? "secondary" : "primary"}
-                    variant="contained"
-                    style={{
-                      width: "13rem",
-                      whiteSpace: "nowrap",
-                    }}
-                    onClick={() => handleCategoriaClick(categoria.id)}
-                  >
-                    {categoria.nome}
-                  </Button>
-                </ThemeProvider>
-              </SwiperSlide>
+             <SwiperSlide key={index}>
+             <ThemeProvider theme={theme}>
+               <Button
+                 style={{
+                   width: "13rem",
+                   whiteSpace: "nowrap",
+                   backgroundColor: categoriaSelecionada === categoria.id ? "darkred" : "",
+                   color: categoriaSelecionada === categoria.id ? "#fff" : "",
+                 }}
+                 size="medium"
+                 color="primary"
+                 variant="contained"
+                 onClick={() => handleCategoriaClick(categoria.id)}
+               >
+                 {categoria.nome}
+               </Button>
+             </ThemeProvider>
+           </SwiperSlide>
             ))}
           </Swiper>
           <div>
