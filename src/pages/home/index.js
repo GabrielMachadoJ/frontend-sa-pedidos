@@ -42,19 +42,20 @@ const Home = () => {
       const tokenPayload = jwtDecode(token);
       console.log(tokenPayload);
       const idCliente = tokenPayload.idDoCliente;
-      // const resp = await apiKauan.get(`/clientes/id/${idCliente}`, {
+      const respCliente = await apiKauan.get(`/clientes/id/${idCliente}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       const resp = await apiKauan.get(`/cupons`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(resp);
-      const nomeCliente = resp?.data.nome;
-      const roleCliente = resp?.data.usuario.role;
-
+      const nomeCliente = respCliente?.data.nome;
       localStorage.setItem(
         "user_data",
-        JSON.stringify({ nomeCliente, roleCliente })
+        JSON.stringify({ nomeCliente })
       );
     };
     getUser();
