@@ -167,12 +167,12 @@ const Home = () => {
              <ThemeProvider theme={theme}>
                <Button
                  style={{
-                   width: "13rem",
+                   width: "10rem",
                    whiteSpace: "nowrap",
                    backgroundColor: categoriaSelecionada === categoria.id ? "darkred" : "",
                    color: categoriaSelecionada === categoria.id ? "#fff" : "",
                  }}
-                 size="medium"
+                 size="small"
                  color="primary"
                  variant="contained"
                  onClick={() => handleCategoriaClick(categoria.id)}
