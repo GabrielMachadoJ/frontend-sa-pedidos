@@ -1,25 +1,23 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Header from "../../components/Header";
-import { CaretCircleRight, CaretCircleLeft } from "@phosphor-icons/react";
 import {
   Backdrop,
   Button,
-  CircularProgress,
-  IconButton,
+  CircularProgress, createTheme, IconButton,
   Pagination,
-  ThemeProvider,
-  createTheme,
+  ThemeProvider
 } from "@mui/material";
+import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
+import React, { useCallback, useEffect, useState } from "react";
+import Header from "../../components/Header";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import "swiper/css";
-import "swiper/css/pagination";
-import { useScreenSizeContext } from "../../context/useScreenSize";
-import RestaurantCard from "../../components/RestaurantCard";
-import { apiKauan, apiLaudelino } from "../../service/api";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
+import "swiper/css";
+import "swiper/css/pagination";
+import RestaurantCard from "../../components/RestaurantCard";
+import { useScreenSizeContext } from "../../context/useScreenSize";
+import { apiKauan, apiLaudelino } from "../../service/api";
 
 const theme = createTheme({
   palette: {
@@ -27,54 +25,16 @@ const theme = createTheme({
   },
 });
 
-export default function Home() {
+const Home = () => {
   const [swiperRef, setSwiperRef] = useState();
   const { screenWidth } = useScreenSizeContext();
   const [restaurantes, setRestaurantes] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState(null);
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
-
-  const mock = [
-    {
-      nome: "JAPONESA",
-    },
-    {
-      nome: "HAMBURGUER",
-    },
-    {
-      nome: "PIZZA",
-    },
-    {
-      nome: "FITNESS",
-    },
-    {
-      nome: "MARMITA",
-    },
-    {
-      nome: "CAFETERIA",
-    },
-    {
-      nome: "FAST FOOD",
-    },
-    {
-      nome: "FOOD TRUCK",
-    },
-    {
-      nome: "PUB",
-    },
-    {
-      nome: "BRASILEIRA",
-    },
-  ];
-
-  // useEffect(() => {
-  //   const paginaAtual = Number(location.search.split("=")[1]);
-  //   navigate(`/home?page=${paginaAtual}`);
-  //   // window.location.reload();
-  //   window.history.replaceState({}, "", `/home?page=${paginaAtual}`);
-  // }, [page]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -102,6 +62,10 @@ export default function Home() {
 
   useEffect(() => {
     getRestaurants();
+  }, [page, categoriaSelecionada]);
+
+  useEffect(() => {
+    getCategorias();
   }, [page]);
 
   const handlePrevious = useCallback(() => {
@@ -112,11 +76,31 @@ export default function Home() {
     swiperRef?.slideNext();
   }, [swiperRef]);
 
+  const getCategorias = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiLaudelino.get(`/categorias?status=A&tipo=RESTAURANTE`);
+      const categorias = response.data?.listagem;
+
+      if (categorias.length > 0) {
+        setCategorias(categorias);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const getRestaurants = async () => {
     setIsLoading(true);
     try {
-      const response = await apiLaudelino.get(`/restaurantes?pagina=${page}`);
+      let url = `/restaurantes?pagina=${page}`;
+      if (categoriaSelecionada) {
+        url += `&id-categoria=${categoriaSelecionada}`;
+      }
 
+      const response = await apiLaudelino.get(url);
       const totalDePaginas = response.data?.totalDePaginas;
       setTotalPage(totalDePaginas);
 
@@ -130,6 +114,12 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCategoriaClick = async (categoriaId) => {
+    setCategoriaSelecionada((prevCategoria) =>
+      prevCategoria === categoriaId ? null : categoriaId
+    );
   };
 
   return (
@@ -194,22 +184,25 @@ export default function Home() {
             onSwiper={setSwiperRef}
             className="mySwiper"
           >
-            {mock.map((categoria, index) => (
-              <SwiperSlide key={index}>
-                <ThemeProvider theme={theme}>
-                  <Button
-                    size="medium"
-                    color="primary"
-                    variant="contained"
-                    style={{
-                      width: "7rem",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {categoria.nome}
-                  </Button>
-                </ThemeProvider>
-              </SwiperSlide>
+            {categorias.map((categoria, index) => (
+             <SwiperSlide key={index}>
+             <ThemeProvider theme={theme}>
+               <Button
+                 style={{
+                   width: "10rem",
+                   whiteSpace: "nowrap",
+                   backgroundColor: categoriaSelecionada === categoria.id ? "darkred" : "",
+                   color: categoriaSelecionada === categoria.id ? "#fff" : "",
+                 }}
+                 size="small"
+                 color="primary"
+                 variant="contained"
+                 onClick={() => handleCategoriaClick(categoria.id)}
+               >
+                 {categoria.nome}
+               </Button>
+             </ThemeProvider>
+           </SwiperSlide>
             ))}
           </Swiper>
           <div>
@@ -276,4 +269,6 @@ export default function Home() {
       </Backdrop>
     </>
   );
-}
+};
+
+export default Home;
