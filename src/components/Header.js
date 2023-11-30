@@ -46,8 +46,12 @@ export default function Header() {
 
   useEffect(() => {
     const localData = localStorage.getItem("user_data");
+    console.log("localData:", localData);
+  
     if (localData) {
       const userData = JSON.parse(localData);
+      console.log("userData:", userData);
+  
       const { nomeCliente } = userData;
       setNomeCliente(nomeCliente);
     }
@@ -62,6 +66,7 @@ export default function Header() {
 
   const handleSignOut = () => {
     window.localStorage.clear();
+    setNomeCliente(null);
     navigate("/");
   };
 
