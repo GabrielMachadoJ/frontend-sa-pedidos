@@ -1,21 +1,36 @@
 import { Button, Card, TextField } from "@mui/material";
 import imgLogin from "../../assets/img-login.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useScreenSizeContext } from "../../context/useScreenSize";
 import { apiKauan } from "../../service/api";
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import Notification from "../../components/Notification";
 
 export default function Login() {
   const { screenWidth } = useScreenSizeContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [openNotification, setOpenNotification] = useState(false);
+  const [messageNotification, setMessageNotification] = useState("");
+  const [typeNotification, setTypeNotification] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
-    const body = JSON.stringify({
-      email,
-      senha: password,
-    });
-    // const resp = await apiKauan.post("/auth", body);
+    try {
+      const body = {
+        email,
+        senha: password,
+      };
+      const resp = await apiKauan.post("/auth", body);
+      const token = resp.data.token;
+      window.localStorage.setItem("user", token);
+      navigate("/home");
+    } catch (error) {
+      setOpenNotification(true);
+      setMessageNotification("Erro ao efetuar o login!");
+      setTypeNotification("error");
+    }
   };
 
   return (
@@ -134,21 +149,25 @@ export default function Login() {
             }}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Link to={"/home?page=0"}>
-            <Button
-              variant="contained"
-              size="large"
-              style={{
-                backgroundColor: "#FF2A00",
-                padding: ".5rem 2rem",
-              }}
-              onClick={() => handleLogin()}
-            >
-              Entrar
-            </Button>
-          </Link>
+          <Button
+            variant="contained"
+            size="large"
+            style={{
+              backgroundColor: "#FF2A00",
+              padding: ".5rem 2rem",
+            }}
+            onClick={() => handleLogin()}
+          >
+            Entrar
+          </Button>
         </div>
       </Card>
+      <Notification
+        handleClose={() => setOpenNotification(false)}
+        message={messageNotification}
+        open={openNotification}
+        type={typeNotification}
+      />
     </div>
   );
 }

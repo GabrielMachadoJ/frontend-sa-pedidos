@@ -1,22 +1,18 @@
-import { useLocation } from "react-router-dom";
-import Header from "../../components/Header";
-import { useEffect, useState } from "react";
-import { apiLaudelino } from "../../service/api";
 import {
   Backdrop,
   Button,
-  Card,
   CircularProgress,
   Dialog,
   DialogContent,
-  DialogTitle,
   Grid,
   IconButton,
-  Modal,
 } from "@mui/material";
-import OpcaoCardapioImg from "../../assets/cardapio.png";
 import { Minus, Plus } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Header from "../../components/Header";
 import { usePedidoContext } from "../../context/usePedido";
+import { apiLaudelino } from "../../service/api";
 
 export default function Restaurant() {
   const location = useLocation();
@@ -35,34 +31,38 @@ export default function Restaurant() {
     const getCardapioRestaurante = async () => {
       try {
         setIsLoading(true);
-        const resp = await apiLaudelino.get(`/cardapios?id-restaurante=${idRestaurante}`);
+        const resp = await apiLaudelino.get(
+          `/cardapios?id-restaurante=${idRestaurante}`
+        );
         const responseData = resp.data.listagem[0];
         handleChangeIdCardapio(responseData?.id);
         setResponse(resp);
-  
+
         const opSecao = {};
         const opcoesPromises = [];
-  
+
         for (const opcao of responseData?.opcoes || []) {
           const nomeSecao = opcao.secao.nome;
-  
+
           if (!opSecao[nomeSecao]) {
             opSecao[nomeSecao] = [];
           }
-  
+
           const opcaoPromise = (async () => {
-            const descricaoResp = await apiLaudelino.get(`/opcoes/id/${opcao.id}`);
+            const descricaoResp = await apiLaudelino.get(
+              `/opcoes/id/${opcao.id}`
+            );
             console.log(descricaoResp.data);
-            const descricao = descricaoResp.data?.descricao || '';
+            const descricao = descricaoResp.data?.descricao || "";
             const opcaoComDescricao = { ...opcao, descricao };
             opSecao[nomeSecao].push(opcaoComDescricao);
             console.log(opSecao);
             return opcaoComDescricao;
           })();
-  
+
           opcoesPromises.push(opcaoPromise);
         }
-  
+
         const opcoesComDescricao = await Promise.all(opcoesPromises);
         setOpcoesPorSecao(opSecao);
       } catch (error) {
@@ -71,10 +71,10 @@ export default function Restaurant() {
         setIsLoading(false);
       }
     };
-  
+
     getCardapioRestaurante();
   }, [idRestaurante]);
-  
+
   const handleCloseModal = () => {
     setOpenModalOpcao(false);
   };
@@ -106,12 +106,16 @@ export default function Restaurant() {
             fontSize: "1.6rem",
             fontWeight: 400,
             marginBottom: "1.2rem",
-            color: "red"
+            color: "red",
           }}
         >
           {secaoNome}.
         </h2>
-        <Grid container spacing={2} style={{ marginLeft: "-1rem", marginRight: "-1rem" }}>
+        <Grid
+          container
+          spacing={2}
+          style={{ marginLeft: "-1rem", marginRight: "-1rem" }}
+        >
           {opcoes.map((opcao) => (
             <Grid key={opcao.id} item xs={12} sm={6} md={6} lg={6}>
               <div
@@ -121,7 +125,7 @@ export default function Restaurant() {
                   boxSizing: "border-box",
                   display: "flex",
                   flexDirection: "column",
-                  alignItems: "center" // Centraliza os cards horizontalmente
+                  alignItems: "center", // Centraliza os cards horizontalmente
                 }}
               >
                 <div
@@ -130,7 +134,7 @@ export default function Restaurant() {
                     justifyContent: "space-between",
                     height: "10rem",
                     padding: ".8rem",
-                    boxSizing: "border-box"
+                    boxSizing: "border-box",
                   }}
                   onClick={() => handleAddOpcao(opcao)}
                 >
@@ -139,6 +143,7 @@ export default function Restaurant() {
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
+                      width: "100%",
                     }}
                   >
                     <h2 style={{ fontSize: "1.2rem", fontWeight: 400 }}>
@@ -197,7 +202,7 @@ export default function Restaurant() {
         }}
       >
         <div
-           style={{
+          style={{
             margin: "1rem 1rem 0rem 6rem", // Margem: topo direita inferior esquerda
             borderRadius: "50%",
             overflow: "hidden",

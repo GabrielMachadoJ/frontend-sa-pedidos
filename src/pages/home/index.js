@@ -17,8 +17,9 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { useScreenSizeContext } from "../../context/useScreenSize";
 import RestaurantCard from "../../components/RestaurantCard";
-import { apiLaudelino } from "../../service/api";
-import { redirect, useLocation, useNavigate } from "react-router-dom";
+import { apiKauan, apiLaudelino } from "../../service/api";
+import { jwtDecode } from "jwt-decode";
+import { useLocation } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -34,7 +35,6 @@ export default function Home() {
   const [totalPage, setTotalPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   const mock = [
     {
@@ -77,6 +77,30 @@ export default function Home() {
   // }, [page]);
 
   useEffect(() => {
+    const getUser = async () => {
+      const token = localStorage.getItem("user");
+      const tokenPayload = jwtDecode(token);
+      console.log(tokenPayload);
+      const idCliente = tokenPayload.idDoCliente;
+      // const resp = await apiKauan.get(`/clientes/id/${idCliente}`, {
+      const resp = await apiKauan.get(`/cupons`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(resp);
+      const nomeCliente = resp?.data.nome;
+      const roleCliente = resp?.data.usuario.role;
+
+      localStorage.setItem(
+        "user_data",
+        JSON.stringify({ nomeCliente, roleCliente })
+      );
+    };
+    getUser();
+  }, [location]);
+
+  useEffect(() => {
     getRestaurants();
   }, [page]);
 
@@ -92,7 +116,7 @@ export default function Home() {
     setIsLoading(true);
     try {
       const response = await apiLaudelino.get(`/restaurantes?pagina=${page}`);
-      
+
       const totalDePaginas = response.data?.totalDePaginas;
       setTotalPage(totalDePaginas);
 

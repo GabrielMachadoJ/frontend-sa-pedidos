@@ -9,30 +9,38 @@ export function PedidoProvider({ children }) {
 
   const handleSetItensPedido = (opcaoAdicionada) => {
     setItensPedido([...itensPedido, opcaoAdicionada]);
-  }
+  };
 
   const handleCalculaTotalPedido = () => {
     let total = 0;
     itensPedido.forEach((item) => {
-       total += item.opcao.preco * item.qtd; 
-    })
-    console.log(total)
+      total += item.opcao.preco * item.qtd;
+    });
+    console.log(total);
     setTotalPedido(total);
-  }
+  };
 
   const handleChangeIdCardapio = (id) => {
-    setIdCardapio(id)
-  }
+    setIdCardapio(id);
+  };
 
   useEffect(() => {
     if (itensPedido.length > 0) {
       handleCalculaTotalPedido();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itensPedido])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itensPedido]);
 
   return (
-    <PedidoContext.Provider value={{ handleSetItensPedido, totalPedido, itensPedido, idCardapio, handleChangeIdCardapio }}>
+    <PedidoContext.Provider
+      value={{
+        handleSetItensPedido,
+        totalPedido,
+        itensPedido,
+        idCardapio,
+        handleChangeIdCardapio,
+      }}
+    >
       {children}
     </PedidoContext.Provider>
   );

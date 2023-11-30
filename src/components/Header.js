@@ -25,7 +25,7 @@ import {
   Ticket,
   User,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { usePedidoContext } from "../context/usePedido";
 import { apiLaudelino } from "../service/api";
@@ -36,12 +36,22 @@ export default function Header() {
   const [isPedidoOpen, setIsPedidoOpen] = useState(false);
   const [isFinalizandoPedido, setIsFinalizandoPedido] = useState(false);
   const [formaSelecionada, setFormaSelecionada] = useState("dinheiro");
+  const [nomeCliente, setNomeCliente] = useState("X");
   const navigate = useNavigate();
   const { totalPedido, itensPedido, idCardapio } = usePedidoContext();
   const open = Boolean(anchorEl);
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
   const { screenWidth } = useScreenSizeContext();
+
+  useEffect(() => {
+    const localData = localStorage.getItem("user_data");
+    if (localData) {
+      const userData = JSON.parse(localData);
+      const { nomeCliente } = userData;
+      setNomeCliente(nomeCliente);
+    }
+  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -51,6 +61,7 @@ export default function Header() {
   };
 
   const handleSignOut = () => {
+    window.localStorage.clear();
     navigate("/");
   };
 
@@ -83,7 +94,6 @@ export default function Header() {
       console.log(error);
     }
   };
-  console.log(screenWidth);
   return (
     <div
       style={{
@@ -160,7 +170,7 @@ export default function Header() {
                 style={{ backgroundColor: "#FF2A00" }}
                 sx={{ width: 32, height: 32 }}
               >
-                G
+                {nomeCliente.charAt(0)}
               </Avatar>
             </IconButton>
           </Tooltip>
