@@ -18,6 +18,7 @@ import "swiper/css/pagination";
 import RestaurantCard from "../../components/RestaurantCard";
 import { useScreenSizeContext } from "../../context/useScreenSize";
 import { apiKauan, apiLaudelino } from "../../service/api";
+import { useRestauranteContext } from "../../context/useRestaurante";
 
 const theme = createTheme({
   palette: {
@@ -35,6 +36,11 @@ const Home = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
+  const { getRestaurants } = useRestauranteContext();
+
+  const getRestaurantes = () => {
+    getRestaurants(null);
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -62,7 +68,7 @@ const Home = () => {
   }, [location]);
 
   useEffect(() => {
-    getRestaurants();
+    getRestaurantes();
   }, [page, categoriaSelecionada]);
 
   useEffect(() => {
@@ -85,30 +91,6 @@ const Home = () => {
 
       if (categorias.length > 0) {
         setCategorias(categorias);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getRestaurants = async () => {
-    setIsLoading(true);
-    try {
-      let url = `/restaurantes?pagina=${page}`;
-      if (categoriaSelecionada) {
-        url += `&id-categoria=${categoriaSelecionada}`;
-      }
-
-      const response = await apiLaudelino.get(url);
-      const totalDePaginas = response.data?.totalDePaginas;
-      setTotalPage(totalDePaginas);
-
-      const restaurants = response.data?.listagem;
-
-      if (restaurants.length > 0) {
-        setRestaurantes(restaurants);
       }
     } catch (error) {
       console.log(error);

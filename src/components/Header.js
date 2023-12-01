@@ -30,6 +30,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { usePedidoContext } from "../context/usePedido";
 import { apiLaudelino } from "../service/api";
 import { useScreenSizeContext } from "../context/useScreenSize";
+import { useRestauranteContext } from "../context/useRestaurante";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -43,6 +44,7 @@ export default function Header() {
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
   const { screenWidth } = useScreenSizeContext();
+  const { getRestaurants } = useRestauranteContext();
 
   useEffect(() => {
     const localData = localStorage.getItem("user_data");
@@ -56,8 +58,13 @@ export default function Header() {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleGetRestaurantes = () => {
+    getRestaurants(null);
   };
 
   const handleSignOut = () => {
@@ -121,7 +128,9 @@ export default function Header() {
             borderRight: "1px solid #e2dcdc",
             height: "2.5rem",
             padding: "1rem",
+            cursor: "pointer",
           }}
+          onClick={() => handleGetRestaurantes()}
         >
           <House style={{ marginRight: ".5rem" }} color="#FF2A00" size={24} />
           <span style={{ fontSize: "1.2rem", color: "#474342" }}>Início</span>
