@@ -1,9 +1,11 @@
 import {
   Backdrop,
   Button,
-  CircularProgress, createTheme, IconButton,
+  CircularProgress,
+  createTheme,
+  IconButton,
   Pagination,
-  ThemeProvider
+  ThemeProvider,
 } from "@mui/material";
 import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import React, { useCallback, useEffect, useState } from "react";
@@ -37,31 +39,6 @@ const Home = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const getUser = async () => {
-      const token = localStorage.getItem("user");
-      const tokenPayload = jwtDecode(token);
-      console.log(tokenPayload);
-      const idCliente = tokenPayload.idDoCliente;
-      const respCliente = await apiKauan.get(`/clientes/id/${idCliente}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const resp = await apiKauan.get(`/cupons`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const nomeCliente = respCliente?.data.nome;
-      localStorage.setItem(
-        "user_data",
-        JSON.stringify({ nomeCliente })
-      );
-    };
-    getUser();
-  }, [location]);
-
-  useEffect(() => {
     getRestaurants();
   }, [page, categoriaSelecionada]);
 
@@ -80,7 +57,9 @@ const Home = () => {
   const getCategorias = async () => {
     setIsLoading(true);
     try {
-      const response = await apiLaudelino.get(`/categorias?status=A&tipo=RESTAURANTE`);
+      const response = await apiLaudelino.get(
+        `/categorias?status=A&tipo=RESTAURANTE`
+      );
       const categorias = response.data?.listagem;
 
       if (categorias.length > 0) {
@@ -186,24 +165,26 @@ const Home = () => {
             className="mySwiper"
           >
             {categorias.map((categoria, index) => (
-             <SwiperSlide key={index}>
-             <ThemeProvider theme={theme}>
-               <Button
-                 style={{
-                   width: "10rem",
-                   whiteSpace: "nowrap",
-                   backgroundColor: categoriaSelecionada === categoria.id ? "darkred" : "",
-                   color: categoriaSelecionada === categoria.id ? "#fff" : "",
-                 }}
-                 size="small"
-                 color="primary"
-                 variant="contained"
-                 onClick={() => handleCategoriaClick(categoria.id)}
-               >
-                 {categoria.nome}
-               </Button>
-             </ThemeProvider>
-           </SwiperSlide>
+              <SwiperSlide key={index}>
+                <ThemeProvider theme={theme}>
+                  <Button
+                    style={{
+                      width: "10rem",
+                      whiteSpace: "nowrap",
+                      backgroundColor:
+                        categoriaSelecionada === categoria.id ? "darkred" : "",
+                      color:
+                        categoriaSelecionada === categoria.id ? "#fff" : "",
+                    }}
+                    size="small"
+                    color="primary"
+                    variant="contained"
+                    onClick={() => handleCategoriaClick(categoria.id)}
+                  >
+                    {categoria.nome}
+                  </Button>
+                </ThemeProvider>
+              </SwiperSlide>
             ))}
           </Swiper>
           <div>

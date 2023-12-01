@@ -16,6 +16,19 @@ export default function Login() {
   const [typeNotification, setTypeNotification] = useState("");
   const navigate = useNavigate();
 
+  const getUser = async (token) => {
+    const tokenPayload = jwtDecode(token);
+    const idCliente = tokenPayload.idDoCliente;
+    const respCliente = await apiKauan.get(`/clientes/id/${idCliente}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const nomeCliente = respCliente?.data.nome;
+    localStorage.setItem("user_data", JSON.stringify({ nomeCliente }));
+  };
+
   const handleLogin = async () => {
     try {
       const body = {
@@ -25,6 +38,7 @@ export default function Login() {
       const resp = await apiKauan.post("/auth", body);
       const token = resp.data.token;
       window.localStorage.setItem("user", token);
+      await getUser(token);
       navigate("/home");
     } catch (error) {
       setOpenNotification(true);
@@ -128,6 +142,11 @@ export default function Login() {
             InputLabelProps={{
               shrink: true,
             }}
+            onKeyDown={(ev) => {
+              if (ev.key === "Enter") {
+                handleLogin();
+              }
+            }}
             style={{
               marginBottom: "1rem",
               backgroundColor: "#e0e9f383",
@@ -147,7 +166,14 @@ export default function Login() {
               marginBottom: "2rem",
               backgroundColor: "#e0e9f383",
             }}
-            onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(ev) => {
+              if (ev.key === "Enter") {
+                handleLogin();
+              }
+            }}
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
           />
           <Button
             variant="contained"

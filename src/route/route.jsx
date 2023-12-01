@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Login from "../pages/login";
 import Home from "../pages/home";
 import Restaurant from "../pages/restaurant";
+import { useEffect } from "react";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("user");

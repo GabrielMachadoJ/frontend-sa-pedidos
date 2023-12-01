@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import {
+  CaretRight,
   CreditCard,
   Handbag,
   House,
@@ -106,7 +107,7 @@ export default function Header() {
         alignItems: "center",
         top: 0,
         zIndex: 1000,
-        position: "fixed"
+        position: "fixed",
       }}
     >
       <IconButton
@@ -334,7 +335,49 @@ export default function Header() {
               </Card>
             </div>
             <Divider style={{ margin: "1.5rem 0" }} />
-            <div>Cupom aqui</div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "0 1.5rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <Ticket
+                  size={40}
+                  color="gray"
+                  style={{
+                    transform: "rotate(125deg)",
+                    margin: "0 .7rem 0 0",
+                  }}
+                />
+                <div>
+                  <h1 style={{ color: "#3D3A3A", fontSize: "1.2rem" }}>
+                    Cupom
+                  </h1>
+                  <h3
+                    style={{
+                      color: "#8d8888",
+                      fontWeight: 400,
+                      fontSize: ".9rem",
+                    }}
+                  >{`${1} cupom disponível`}</h3>
+                </div>
+              </div>
+              <IconButton>
+                <CaretRight
+                  size={22}
+                  color="#d32f2f"
+                  style={{ cursor: "pointer" }}
+                />
+              </IconButton>
+            </div>
             <Divider style={{ margin: "1.5rem 0" }} />
             <div style={{ padding: "0 2rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
