@@ -7,8 +7,8 @@ import {
   TextField,
 } from "@mui/material";
 import { CaretLeft, Lock, Ticket } from "@phosphor-icons/react";
-import { useCupomContext } from "../context/useCupom";
 import { useState } from "react";
+import { useCupomContext } from "../context/useCupom";
 
 export default function CupomDrawerContent({ setIsCupom }) {
   const [cupomSelecionado, setCupomSelecionado] = useState({});

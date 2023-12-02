@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { usePedidoContext } from "../context/usePedido";
 import { useScreenSizeContext } from "../context/useScreenSize";
 import DrawerComponent from "./DrawerComponent";
+import { getDecrypted } from "../utils/crypto";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -34,11 +35,11 @@ export default function Header() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const localData = localStorage.getItem("user_data");
-    if (localData) {
-      const userData = JSON.parse(localData);
-      const { nomeCliente } = userData;
-      setNomeCliente(nomeCliente);
+    const hashUser = localStorage.getItem("cliente") || "";
+
+    if (hashUser) {
+      const user = getDecrypted(hashUser);
+      setNomeCliente(user.cliente.nome);
     }
   }, []);
 

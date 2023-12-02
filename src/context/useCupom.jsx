@@ -1,30 +1,24 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { apiKauan } from "../service/api";
+import { getDecrypted } from "../utils/crypto";
 
 const CupomContext = createContext();
 
 export function CupomProvider({ children }) {
-  const [cupons, setCupons] = useState(null);
+  const [cupons, setCupons] = useState([]);
   const [qtdCupons, setQtdCupons] = useState(0);
 
   useEffect(() => {
-    const getCupom = async () => {
-      const token = localStorage.getItem("user");
-      const response = await apiKauan.get(
-        "https://gestao-de-cadastros-api-production.up.railway.app/cupons",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = response.data;
-      if (data) {
-        setQtdCupons(data.totalDeItens);
-        setCupons(data.listagem);
+    const handleSetCupons = () => {
+      const hashCupom = localStorage.getItem("cupom") || "";
+
+      if (hashCupom) {
+        const cupom = getDecrypted(hashCupom);
+        console.log(cupom);
+        setCupons(cupom.listagem);
+        setQtdCupons(cupom.totalDeItens);
       }
     };
-    getCupom();
+    handleSetCupons();
   }, []);
 
   return (

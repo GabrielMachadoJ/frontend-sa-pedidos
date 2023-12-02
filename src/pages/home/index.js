@@ -96,7 +96,7 @@ const Home = () => {
     }
   };
 
-  const handleCategoriaClick = async (categoriaId) => {
+  const handleCategoriaClick = (categoriaId) => {
     setCategoriaSelecionada((prevCategoria) =>
       prevCategoria === categoriaId ? null : categoriaId
     );

@@ -6,6 +6,8 @@ import { apiKauan } from "../../service/api";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import Notification from "../../components/Notification";
+import { useCupomContext } from "../../context/useCupom";
+import { getEncrypted } from "../../utils/crypto";
 
 export default function Login() {
   const { screenWidth } = useScreenSizeContext();
@@ -13,20 +15,41 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [openNotification, setOpenNotification] = useState(false);
   const [messageNotification, setMessageNotification] = useState("");
-  const [typeNotification, setTypeNotification] = useState("");
+  const [typeNotification, setTypeNotification] = useState("error");
   const navigate = useNavigate();
 
   const getUser = async (token) => {
     const tokenPayload = jwtDecode(token);
     const idCliente = tokenPayload.idDoCliente;
-    const respCliente = await apiKauan.get(`/clientes/id/${idCliente}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const respCliente = await apiKauan.get(
+      `/enderecos?idDoCliente=${idCliente}&pagina=0`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const userInfos = respCliente.data?.content[0];
+    const cryptoUserInfos = getEncrypted(userInfos);
+    localStorage.setItem("cliente", cryptoUserInfos);
+    getCupom(token);
+  };
 
-    const nomeCliente = respCliente?.data.nome;
-    localStorage.setItem("user_data", JSON.stringify({ nomeCliente }));
+  const getCupom = async (token) => {
+    const response = await apiKauan.get(
+      "https://gestao-de-cadastros-api-production.up.railway.app/cupons",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = response.data;
+
+    if (data) {
+      const hashCupom = getEncrypted(data);
+      localStorage.setItem("cupom", hashCupom);
+    }
   };
 
   const handleLogin = async () => {
@@ -41,6 +64,7 @@ export default function Login() {
       await getUser(token);
       navigate("/home");
     } catch (error) {
+      console.log(error);
       setOpenNotification(true);
       setMessageNotification("Erro ao efetuar o login!");
       setTypeNotification("error");

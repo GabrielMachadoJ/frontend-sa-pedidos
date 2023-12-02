@@ -5,13 +5,24 @@ import {
   Divider,
   Drawer,
   IconButton,
+  Paper,
+  Radio,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePedidoContext } from "../context/usePedido";
-import { CaretRight, CreditCard, Money, Ticket } from "@phosphor-icons/react";
+import {
+  CaretRight,
+  Clock,
+  CreditCard,
+  House,
+  Money,
+  Ticket,
+} from "@phosphor-icons/react";
 import { apiLaudelino } from "../service/api";
 import { useLocation } from "react-router-dom";
 import CupomDrawerContent from "./CupomDrawerContent";
+import { useCupomContext } from "../context/useCupom";
+import { getDecrypted } from "../utils/crypto";
 
 export default function DrawerComponent({
   isPedidoOpen,
@@ -24,6 +35,18 @@ export default function DrawerComponent({
   const [isCupom, setIsCupom] = useState(false);
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
+  const { qtdCupons } = useCupomContext();
+  const [userInfos, setUserInfos] = useState({});
+  const [isCadastrarEndereco, setIsCadastrarEndereco] = useState(false);
+
+  useEffect(() => {
+    const userCrypto = localStorage.getItem("cliente") || "";
+    if (userCrypto) {
+      const decryptedUser = getDecrypted(userCrypto);
+      setUserInfos(decryptedUser);
+    }
+  }, []);
+
   const handleFinalizarPedido = async () => {
     try {
       const body = {
@@ -108,18 +131,64 @@ export default function DrawerComponent({
                   justifyContent: "center",
                 }}
               >
-                <Card
+                <Paper
                   style={{
                     marginBottom: "1rem",
                     width: "18rem",
                     height: "6.5rem",
                     border: "1px solid #fc8f74",
                     padding: "1rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
                   }}
                 >
-                  {" "}
-                  endereco 1
-                </Card>
+                  <House size={60} />
+                  <div
+                    style={{
+                      marginLeft: "1rem",
+                    }}
+                  >
+                    <h1
+                      style={{
+                        fontSize: "1.05rem",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {userInfos.nome}
+                    </h1>
+                    <h3
+                      style={{
+                        fontWeight: 400,
+                        fontSize: "1rem",
+                      }}
+                    >
+                      {`${userInfos.rua}, ${userInfos.cep} - ${userInfos.bairro}, ${userInfos.cidade} - ${userInfos.estado}`}
+                    </h3>
+                    <h3
+                      style={{
+                        fontWeight: 400,
+                        fontSize: ".9rem",
+                      }}
+                    >
+                      {userInfos.complemento || ""}
+                    </h3>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                    }}
+                  >
+                    <Radio
+                      checked={!isCadastrarEndereco}
+                      onClick={() => setIsCadastrarEndereco(false)}
+                      size="small"
+                      color="error"
+                    />
+                  </div>
+                </Paper>
                 <Card
                   style={{
                     width: "18rem",
@@ -127,10 +196,37 @@ export default function DrawerComponent({
                     border: "1px solid #fc8f74",
                     borderRadius: "1.2rem",
                     padding: "1rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
                   }}
                 >
-                  {" "}
-                  endereco 1
+                  <div>
+                    <Clock size={30} />
+                  </div>
+                  <h3
+                    style={{
+                      marginLeft: "1rem",
+                      fontWeight: 400,
+                      fontSize: ".9rem",
+                    }}
+                  >
+                    Cadastrar novo endereço?
+                  </h3>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "100%",
+                    }}
+                  >
+                    <Radio
+                      checked={isCadastrarEndereco}
+                      onClick={() => setIsCadastrarEndereco(true)}
+                      size="small"
+                      color="error"
+                    />
+                  </div>
                 </Card>
               </div>
               <Divider style={{ margin: "1.5rem 0" }} />
@@ -149,7 +245,7 @@ export default function DrawerComponent({
                   }}
                 >
                   <Ticket
-                    size={40}
+                    size={30}
                     color="gray"
                     style={{
                       transform: "rotate(125deg)",
@@ -157,16 +253,16 @@ export default function DrawerComponent({
                     }}
                   />
                   <div>
-                    <h1 style={{ color: "#3D3A3A", fontSize: "1.2rem" }}>
+                    <h1 style={{ color: "#3D3A3A", fontSize: "1.1rem" }}>
                       Cupom
                     </h1>
                     <h3
                       style={{
                         color: "#8d8888",
                         fontWeight: 400,
-                        fontSize: ".9rem",
+                        fontSize: ".8rem",
                       }}
-                    >{`${1} cupom disponível`}</h3>
+                    >{`${qtdCupons || 1} cupom disponível`}</h3>
                   </div>
                 </div>
                 <IconButton onClick={() => setIsCupom(true)}>
