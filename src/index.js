@@ -4,11 +4,14 @@ import App from "./App";
 import "./index.css";
 import { ScreenSizeProvider } from "./context/useScreenSize";
 import { PedidoProvider } from "./context/usePedido";
+import { CupomProvider } from "./context/useCupom";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ScreenSizeProvider>
-    <PedidoProvider>
-    <App />
-    </PedidoProvider>
+    <CupomProvider>
+      <PedidoProvider>
+        <App />
+      </PedidoProvider>
+    </CupomProvider>
   </ScreenSizeProvider>
 );

@@ -11,6 +11,7 @@ import { usePedidoContext } from "../context/usePedido";
 import { CaretRight, CreditCard, Money, Ticket } from "@phosphor-icons/react";
 import { apiLaudelino } from "../service/api";
 import { useLocation } from "react-router-dom";
+import CupomDrawerContent from "./CupomDrawerContent";
 
 export default function DrawerComponent({
   isPedidoOpen,
@@ -23,7 +24,6 @@ export default function DrawerComponent({
   const [isCupom, setIsCupom] = useState(false);
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
-
   const handleFinalizarPedido = async () => {
     try {
       const body = {
@@ -62,160 +62,172 @@ export default function DrawerComponent({
           justifyContent: "space-between",
         }}
       >
-        <div>
-          <h4
-            style={{
-              fontWeight: 300,
-              fontSize: ".8rem",
-              marginBottom: ".5rem",
-            }}
-          >
-            Seu pedido em
-          </h4>
-          <h2 style={{ fontWeight: 500, fontSize: "1.4rem" }}>
-            McDonalds - Tubarão
-          </h2>
-          <Divider style={{ margin: "1.5rem 0" }} />
-          {itensPedido?.map((item) => (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: ".9rem",
-                marginBottom: "1rem",
-              }}
-            >
-              <h3
-                style={{ fontWeight: 500 }}
-              >{`${item.qtd}x ${item.opcao.nome}`}</h3>
-              <h3 style={{ fontWeight: 500 }}>{`R$ ${(
-                item.opcao.preco * item.qtd
-              )
-                .toFixed(2)
-                .replace(".", ",")}`}</h3>
-            </div>
-          ))}
-          <Divider style={{ margin: "1.5rem 0" }} />
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Card
-              style={{
-                marginBottom: "1rem",
-                width: "18rem",
-                height: "6.5rem",
-                border: "1px solid #fc8f74",
-                padding: "1rem",
-              }}
-            >
-              {" "}
-              endereco 1
-            </Card>
-            <Card
-              style={{
-                width: "18rem",
-                height: "6.5rem",
-                border: "1px solid #fc8f74",
-                borderRadius: "1.2rem",
-                padding: "1rem",
-              }}
-            >
-              {" "}
-              endereco 1
-            </Card>
-          </div>
-          <Divider style={{ margin: "1.5rem 0" }} />
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "0 1.5rem",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Ticket
-                size={40}
-                color="gray"
+        {isCupom ? (
+          <CupomDrawerContent setIsCupom={() => setIsCupom(false)} />
+        ) : (
+          <>
+            <div>
+              <h4
                 style={{
-                  transform: "rotate(125deg)",
-                  margin: "0 .7rem 0 0",
+                  fontWeight: 300,
+                  fontSize: ".8rem",
+                  marginBottom: ".5rem",
                 }}
-              />
-              <div>
-                <h1 style={{ color: "#3D3A3A", fontSize: "1.2rem" }}>Cupom</h1>
-                <h3
+              >
+                Seu pedido em
+              </h4>
+              <h2 style={{ fontWeight: 500, fontSize: "1.4rem" }}>
+                McDonalds - Tubarão
+              </h2>
+              <Divider style={{ margin: "1.5rem 0" }} />
+              {itensPedido?.map((item) => (
+                <div
                   style={{
-                    color: "#8d8888",
-                    fontWeight: 400,
+                    display: "flex",
+                    justifyContent: "space-between",
                     fontSize: ".9rem",
+                    marginBottom: "1rem",
                   }}
-                >{`${1} cupom disponível`}</h3>
+                >
+                  <h3
+                    style={{ fontWeight: 500 }}
+                  >{`${item.qtd}x ${item.opcao.nome}`}</h3>
+                  <h3 style={{ fontWeight: 500 }}>{`R$ ${(
+                    item.opcao.preco * item.qtd
+                  )
+                    .toFixed(2)
+                    .replace(".", ",")}`}</h3>
+                </div>
+              ))}
+              <Divider style={{ margin: "1.5rem 0" }} />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Card
+                  style={{
+                    marginBottom: "1rem",
+                    width: "18rem",
+                    height: "6.5rem",
+                    border: "1px solid #fc8f74",
+                    padding: "1rem",
+                  }}
+                >
+                  {" "}
+                  endereco 1
+                </Card>
+                <Card
+                  style={{
+                    width: "18rem",
+                    height: "6.5rem",
+                    border: "1px solid #fc8f74",
+                    borderRadius: "1.2rem",
+                    padding: "1rem",
+                  }}
+                >
+                  {" "}
+                  endereco 1
+                </Card>
+              </div>
+              <Divider style={{ margin: "1.5rem 0" }} />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "0 1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Ticket
+                    size={40}
+                    color="gray"
+                    style={{
+                      transform: "rotate(125deg)",
+                      margin: "0 .7rem 0 0",
+                    }}
+                  />
+                  <div>
+                    <h1 style={{ color: "#3D3A3A", fontSize: "1.2rem" }}>
+                      Cupom
+                    </h1>
+                    <h3
+                      style={{
+                        color: "#8d8888",
+                        fontWeight: 400,
+                        fontSize: ".9rem",
+                      }}
+                    >{`${1} cupom disponível`}</h3>
+                  </div>
+                </div>
+                <IconButton onClick={() => setIsCupom(true)}>
+                  <CaretRight
+                    size={22}
+                    color="#d32f2f"
+                    style={{ cursor: "pointer" }}
+                  />
+                </IconButton>
+              </div>
+              <Divider style={{ margin: "1.5rem 0" }} />
+              <div style={{ padding: "0 2rem" }}>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
+                    Subtotal
+                  </h4>
+                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
+                    R$ {totalPedido.toFixed(2).replace(".", ",")}
+                  </h4>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: ".5rem",
+                  }}
+                >
+                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
+                    Taxa de entrega
+                  </h4>
+                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>R$ 0,00</h4>
+                </div>
               </div>
             </div>
-            <IconButton onClick={() => setIsCupom(true)}>
-              <CaretRight
-                size={22}
-                color="#d32f2f"
-                style={{ cursor: "pointer" }}
-              />
-            </IconButton>
-          </div>
-          <Divider style={{ margin: "1.5rem 0" }} />
-          <div style={{ padding: "0 2rem" }}>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>Subtotal</h4>
-              <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
-                R$ {totalPedido.toFixed(2).replace(".", ",")}
-              </h4>
+            <div style={{ padding: "0 1rem", marginBottom: "3rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "1rem",
+                }}
+              >
+                <h4 style={{ fontWeight: 500, fontSize: "1rem" }}>Total</h4>
+                <h4 style={{ fontWeight: 500, fontSize: "1rem" }}>
+                  R$ {totalPedido.toFixed(2).replace(".", ",")}
+                </h4>
+              </div>
+              <Button
+                size="large"
+                color="error"
+                variant="contained"
+                fullWidth
+                onClick={() => setIsFinalizandoPedido(true)}
+              >
+                Escolher forma de pagamento
+              </Button>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: ".5rem",
-              }}
-            >
-              <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
-                Taxa de entrega
-              </h4>
-              <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>R$ 0,00</h4>
-            </div>
-          </div>
-        </div>
-        <div style={{ padding: "0 1rem", marginBottom: "3rem" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: "1rem",
-            }}
-          >
-            <h4 style={{ fontWeight: 500, fontSize: "1rem" }}>Total</h4>
-            <h4 style={{ fontWeight: 500, fontSize: "1rem" }}>
-              R$ {totalPedido.toFixed(2).replace(".", ",")}
-            </h4>
-          </div>
-          <Button
-            size="large"
-            color="error"
-            variant="contained"
-            fullWidth
-            onClick={() => setIsFinalizandoPedido(true)}
-          >
-            Escolher forma de pagamento
-          </Button>
-        </div>
+          </>
+        )}
       </div>
       <Dialog
         open={isFinalizandoPedido}
