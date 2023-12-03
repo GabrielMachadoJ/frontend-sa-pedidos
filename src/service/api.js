@@ -1,17 +1,17 @@
 import axios from "axios";
 
-const token = process.env.REACT_APP_TOKEN_LAUDELINO;
-const urlLaudelino = process.env.REACT_APP_URL_LAUDELINO;
-const urlKauan = process.env.REACT_APP_URL_KAUAN;
+const TOKEN = process.env.REACT_APP_TOKEN_LAUDELINO;
+const URL_LAUDELINO = process.env.REACT_APP_URL_LAUDELINO;
+const URL_KAUAN = process.env.REACT_APP_URL_KAUAN;
 
 export const apiLaudelino = axios.create({
-  baseURL: urlLaudelino,
+  baseURL: URL_LAUDELINO,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${TOKEN}`,
   },
 });
 
 export const apiKauan = axios.create({
-  baseURL: urlKauan,
+  baseURL: URL_KAUAN,
 });
