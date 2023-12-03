@@ -1,28 +1,20 @@
 import {
   Button,
   Card,
-  Dialog,
   Divider,
   Drawer,
   IconButton,
   Paper,
   Radio,
 } from "@mui/material";
+import { CaretRight, Clock, House, Ticket } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { usePedidoContext } from "../context/usePedido";
-import {
-  CaretRight,
-  Clock,
-  CreditCard,
-  House,
-  Money,
-  Ticket,
-} from "@phosphor-icons/react";
-import { apiLaudelino } from "../service/api";
 import { useLocation } from "react-router-dom";
-import CupomDrawerContent from "./CupomDrawerContent";
 import { useCupomContext } from "../context/useCupom";
+import { usePedidoContext } from "../context/usePedido";
+import { apiLaudelino } from "../service/api";
 import { getDecrypted } from "../utils/crypto";
+import CupomDrawerContent from "./CupomDrawerContent";
 import DialogCreateAdress from "./DialogCreateAdress";
 import DialogFinalizarPedido from "./DialogFinalizarPedido";
 
