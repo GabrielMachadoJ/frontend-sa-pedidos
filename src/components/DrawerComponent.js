@@ -40,10 +40,14 @@ export default function DrawerComponent({
   const [isCadastrarEndereco, setIsCadastrarEndereco] = useState(false);
 
   useEffect(() => {
-    const userCrypto = localStorage.getItem("cliente") || "";
-    if (userCrypto) {
-      const decryptedUser = getDecrypted(userCrypto);
-      setUserInfos(decryptedUser);
+    try {
+      const userCrypto = localStorage.getItem("cliente") || "";
+      if (userCrypto) {
+        const decryptedUser = getDecrypted(userCrypto);
+        setUserInfos(decryptedUser);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }, []);
 
