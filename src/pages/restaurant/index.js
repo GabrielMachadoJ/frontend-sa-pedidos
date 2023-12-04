@@ -17,17 +17,23 @@ import Header from "../../components/Header";
 export default function Restaurant() {
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
-  const { name, descricaoRestaurante } = location.state;
+  const { name, descricaoRestaurante, cep } = location.state;
   const [opcoesPorSecao, setOpcoesPorSecao] = useState({});
   const [openModalOpcao, setOpenModalOpcao] = useState(false);
   const [opcaoSelecionada, setOpcaoSelecionada] = useState({});
   const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(1);
-  const { handleSetItensPedido, handleChangeIdCardapio } = usePedidoContext();
+  const {
+    handleSetItensPedido,
+    handleChangeIdCardapio,
+    handleSetNomeRestaurante,
+    nomeRestaurante,
+    handleSetCepRestaurante,
+  } = usePedidoContext();
   const [isLoading, setIsLoading] = useState(false);
   const [opcaoExistenteNoCarrinho, setOpcaoExistenteNoCarrinho] =
     useState(null);
   const [response, setResponse] = useState(null);
-  const { itensPedido, setItensPedido } = usePedidoContext(); // Adicione esta linha
+  const { itensPedido, handleSetIdRestaurante } = usePedidoContext(); // Adicione esta linha
 
   useEffect(() => {
     const getCardapioRestaurante = async () => {
@@ -58,7 +64,8 @@ export default function Restaurant() {
           opSecao[nomeSecao].push(opcaoComDescricao);
           opcoesPromises.push(opcaoComDescricao);
         }
-
+        handleSetCepRestaurante(cep);
+        handleSetIdRestaurante(idRestaurante);
         await Promise.all(opcoesPromises);
         setOpcoesPorSecao(opSecao);
       } catch (error) {
@@ -67,9 +74,20 @@ export default function Restaurant() {
         setIsLoading(false);
       }
     };
-
-    getCardapioRestaurante();
+    if (Object.keys(opcoesPorSecao).length === 0) {
+      getCardapioRestaurante();
+    }
   }, [idRestaurante, handleChangeIdCardapio]);
+
+  useEffect(() => {
+    if (nomeRestaurante) {
+      if (nomeRestaurante === name) {
+        handleSetNomeRestaurante(name);
+      }
+    } else if (name) {
+      handleSetNomeRestaurante(name);
+    }
+  }, [location]);
 
   const handleCloseModal = () => {
     setOpenModalOpcao(false);
@@ -94,6 +112,7 @@ export default function Restaurant() {
       opcao: opcaoSelecionada,
       qtd: quantidadeSelecionada,
     });
+    handleSetNomeRestaurante(name);
     handleCloseModal();
     setQuantidadeSelecionada(1);
   };

@@ -25,6 +25,7 @@ export default function RestaurantCard(params) {
                 state={{
                   url: rest.url_imagem ?? "",
                   name: rest.nome ?? "",
+                  cep: rest.endereco.cep ?? "",
                 }}
               >
                 <div

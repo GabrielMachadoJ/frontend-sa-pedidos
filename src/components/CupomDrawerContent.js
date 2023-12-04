@@ -11,9 +11,9 @@ import { useState } from "react";
 import { useCupomContext } from "../context/useCupom";
 
 export default function CupomDrawerContent({ setIsCupom }) {
-  const [cupomSelecionado, setCupomSelecionado] = useState({});
   const [codigoCupom, setCodigoCupom] = useState("");
-  const { cupons } = useCupomContext();
+  const { cupons, cupomSelecionado, handleSetCupomSelecionado } =
+    useCupomContext();
 
   const handleSelectCupom = () => {};
 
@@ -112,8 +112,8 @@ export default function CupomDrawerContent({ setIsCupom }) {
                 </div>
               </div>
               <Radio
-                checked={cupomSelecionado.id_cupom === "sem_cupom"}
-                onClick={() => setCupomSelecionado({ id_cupom: "sem_cupom" })}
+                checked={cupomSelecionado.id === 0}
+                onClick={() => handleSetCupomSelecionado({ id: 0 })}
                 color="error"
               />
             </div>
@@ -121,7 +121,7 @@ export default function CupomDrawerContent({ setIsCupom }) {
 
           {cupons?.map((cupom) => (
             <Paper
-              key={cupom.id_cupom}
+              key={cupom.id}
               elevation={3}
               style={{ marginBottom: "2rem" }}
             >
@@ -156,14 +156,14 @@ export default function CupomDrawerContent({ setIsCupom }) {
                           fontWeight: 500,
                         }}
                       >
-                        {`${cupom.percentual_de_desconto}% OFF para todos os resturantes`}
+                        {`${cupom.percentualDeDesconto}% OFF para todos os resturantes`}
                       </h1>
                     </div>
                   </div>
                   <Radio
-                    checked={cupomSelecionado.id_cupom === cupom.id_cupom}
+                    checked={cupomSelecionado.id === cupom.id}
                     color="error"
-                    onClick={() => setCupomSelecionado(cupom)}
+                    onClick={() => handleSetCupomSelecionado(cupom)}
                   />
                 </div>
                 <h3

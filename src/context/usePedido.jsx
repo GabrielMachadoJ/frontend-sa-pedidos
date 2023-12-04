@@ -6,9 +6,14 @@ export function PedidoProvider({ children }) {
   const [itensPedido, setItensPedido] = useState([]);
   const [totalPedido, setTotalPedido] = useState(0);
   const [idCardapio, setIdCardapio] = useState(0);
+  const [idRestaurante, setIdRestaurante] = useState(0);
+  const [nomeRestaurante, setNomeRestaurante] = useState("");
+  const [cepRestaurante, setCepRestaurante] = useState("");
 
   const handleSetItensPedido = (opcaoAdicionada) => {
-    const opcaoExistenteIndex = itensPedido.findIndex((item) => item.opcao.id === opcaoAdicionada.opcao.id);
+    const opcaoExistenteIndex = itensPedido.findIndex(
+      (item) => item.opcao.id === opcaoAdicionada.opcao.id
+    );
 
     if (opcaoExistenteIndex !== -1) {
       const novoItensPedido = [...itensPedido];
@@ -16,8 +21,12 @@ export function PedidoProvider({ children }) {
       if (opcaoAdicionada.qtd < novoItensPedido[opcaoExistenteIndex].qtd) {
         novoItensPedido[opcaoExistenteIndex] = { ...opcaoAdicionada };
       } else {
-        const diferenca = opcaoAdicionada.qtd - novoItensPedido[opcaoExistenteIndex].qtd;
-        novoItensPedido[opcaoExistenteIndex] = { ...opcaoAdicionada, qtd: opcaoAdicionada.qtd + diferenca };
+        const diferenca =
+          opcaoAdicionada.qtd - novoItensPedido[opcaoExistenteIndex].qtd;
+        novoItensPedido[opcaoExistenteIndex] = {
+          ...opcaoAdicionada,
+          qtd: opcaoAdicionada.qtd + diferenca,
+        };
       }
 
       setItensPedido(novoItensPedido);
@@ -34,8 +43,20 @@ export function PedidoProvider({ children }) {
     setTotalPedido(total);
   };
 
+  const handleSetNomeRestaurante = (nome) => {
+    setNomeRestaurante(nome);
+  };
+
+  const handleSetCepRestaurante = (cep) => {
+    setCepRestaurante(cep);
+  };
+
   const handleChangeIdCardapio = (id) => {
     setIdCardapio(id);
+  };
+
+  const handleSetIdRestaurante = (id) => {
+    setIdRestaurante(Number(id));
   };
 
   useEffect(() => {
@@ -45,9 +66,23 @@ export function PedidoProvider({ children }) {
   }, [itensPedido]);
 
   return (
-    <PedidoContext.Provider value={{ handleSetItensPedido, totalPedido, itensPedido, idCardapio, handleChangeIdCardapio }}>
-    {children}
-  </PedidoContext.Provider>
+    <PedidoContext.Provider
+      value={{
+        handleSetItensPedido,
+        totalPedido,
+        itensPedido,
+        idCardapio,
+        idRestaurante,
+        nomeRestaurante,
+        cepRestaurante,
+        handleSetIdRestaurante,
+        handleChangeIdCardapio,
+        handleSetNomeRestaurante,
+        handleSetCepRestaurante,
+      }}
+    >
+      {children}
+    </PedidoContext.Provider>
   );
 }
 
@@ -55,8 +90,10 @@ export const usePedidoContext = () => {
   const context = useContext(PedidoContext);
 
   if (!context) {
-    throw new Error("usePedidoContext deve ser usado dentro de um PedidoProvider");
+    throw new Error(
+      "usePedidoContext deve ser usado dentro de um PedidoProvider"
+    );
   }
 
   return context;
-}
+};

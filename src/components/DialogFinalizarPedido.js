@@ -1,5 +1,5 @@
-import { Button, Dialog, Divider, IconButton } from "@mui/material";
-import { CreditCard, Money } from "@phosphor-icons/react";
+import { Button, Dialog, Divider, IconButton, Paper } from "@mui/material";
+import { CreditCard, House, MapPinLine, Money } from "@phosphor-icons/react";
 
 export default function DialogFinalizarPedido({
   isFinalizandoPedido,
@@ -7,6 +7,7 @@ export default function DialogFinalizarPedido({
   formaSelecionada,
   setFormaSelecionada,
   handleFinalizarPedido,
+  userInfos,
 }) {
   return (
     <Dialog
@@ -23,7 +24,50 @@ export default function DialogFinalizarPedido({
         </h1>
         <div style={{ padding: "1rem" }}>
           <h3 style={{ color: "#eb7575" }}>Entrega</h3>
-          endereco aqui
+          <div
+            style={{
+              marginBottom: "1rem",
+              width: "100%",
+              height: "6.5rem",
+              padding: "1rem",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-start",
+            }}
+          >
+            <MapPinLine size={60} color="#6eb654" />
+            <Divider orientation="vertical" />
+            <div
+              style={{
+                marginLeft: "1rem",
+              }}
+            >
+              <h1
+                style={{
+                  fontSize: "1.05rem",
+                  fontWeight: 600,
+                }}
+              >
+                {userInfos.nome}
+              </h1>
+              <h3
+                style={{
+                  fontWeight: 400,
+                  fontSize: "1rem",
+                }}
+              >
+                {`${userInfos.rua}, ${userInfos.cep} - ${userInfos.bairro}, ${userInfos.cidade} - ${userInfos.estado}`}
+              </h3>
+              <h3
+                style={{
+                  fontWeight: 400,
+                  fontSize: ".9rem",
+                }}
+              >
+                {userInfos.complemento || ""}
+              </h3>
+            </div>
+          </div>
           <Divider />
           <div
             style={{

@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useCupomContext } from "../context/useCupom";
 import { usePedidoContext } from "../context/usePedido";
-import { apiLaudelino } from "../service/api";
+import { api, apiLaudelino, apiRaul } from "../service/api";
 import { getDecrypted } from "../utils/crypto";
 import CupomDrawerContent from "./CupomDrawerContent";
 import DialogCreateAdress from "./DialogCreateAdress";
@@ -25,13 +25,22 @@ export default function DrawerComponent({
   formaSelecionada,
 }) {
   const [isFinalizandoPedido, setIsFinalizandoPedido] = useState(false);
-  const { totalPedido, itensPedido, idCardapio } = usePedidoContext();
+  const {
+    totalPedido,
+    itensPedido,
+    idCardapio,
+    idRestaurante,
+    nomeRestaurante,
+    cepRestaurante,
+  } = usePedidoContext();
   const [isCupom, setIsCupom] = useState(false);
-  const location = useLocation();
-  const idRestaurante = location.pathname.split("/")[2];
-  const { qtdCupons } = useCupomContext();
+  const { cupomSelecionado, qtdCupons } = useCupomContext();
   const [userInfos, setUserInfos] = useState({});
   const [isCadastrarEndereco, setIsCadastrarEndereco] = useState(false);
+  const [valorDesconto, setValorDesconto] = useState(0);
+  const [valorTotal, setValorTotal] = useState(0);
+  const [valorFrete, setValorFrete] = useState(0);
+  const [desconto, setDesconto] = useState(0);
 
   useEffect(() => {
     try {
@@ -39,24 +48,65 @@ export default function DrawerComponent({
       if (userCrypto) {
         const decryptedUser = getDecrypted(userCrypto);
         setUserInfos(decryptedUser);
+        calcularFrete();
       }
     } catch (error) {
       console.log(error);
     }
   }, []);
 
+  useEffect(() => {
+    if (Object.entries(cupomSelecionado).length !== 0) {
+      const valorDesconto = cupomSelecionado
+        ? totalPedido * (cupomSelecionado.percentualDeDesconto / 100)
+        : 0;
+      setValorDesconto(valorDesconto);
+
+      setDesconto(cupomSelecionado.percentualDeDesconto);
+
+      const valorTotal = totalPedido + valorFrete - valorDesconto;
+      setValorTotal(valorTotal);
+    }
+  }, [cupomSelecionado]);
+
+  useEffect(() => {
+    if (cepRestaurante) {
+      calcularFrete();
+    }
+  }, [cepRestaurante]);
+
+  const calcularFrete = async () => {
+    const cepCliente = userInfos.cep?.replace(/\D/g, "");
+    if (cepCliente && cepRestaurante) {
+      const resp = await apiRaul.get(
+        `/frete/cepDeOrigem/${cepRestaurante}/cepDeDestino/${cepCliente}`
+      );
+      const valorFrete = resp.data.custo;
+      const valorTotal = totalPedido + valorFrete - valorDesconto;
+      setValorTotal(valorTotal);
+      setValorFrete(valorFrete);
+    }
+  };
+
   const handleFinalizarPedido = async () => {
     try {
+      const user = localStorage.getItem("cliente");
+      const decryptedUser = getDecrypted(user);
+      console.log(decryptedUser);
+      const idEndereco = decryptedUser.id;
+      const idCliente = decryptedUser.cliente.id;
+      const idCupom = cupomSelecionado ? cupomSelecionado.id : 0;
+
       const body = {
-        retirada: "RETIRADA",
+        retirada: "DELIVERY",
         pagamento: formaSelecionada === "dinheiro" ? "DINHEIRO" : "POS",
-        valorTotal: totalPedido,
-        valorDesconto: 0,
-        valorItens: totalPedido,
-        valorFrete: 0,
-        idCliente: 7,
-        idCupom: 3,
-        idEndereco: 1,
+        valorTotal: Number(valorTotal.toFixed(2)),
+        valorDesconto: Number(desconto.toFixed(2)),
+        valorItens: Number(totalPedido.toFixed(1)),
+        valorFrete: Number(valorFrete.toFixed(2)),
+        idCliente,
+        idCupom,
+        idEndereco,
         idRestaurante,
         idDoCardapio: idCardapio,
         opcoes: itensPedido.map((item) => {
@@ -65,7 +115,8 @@ export default function DrawerComponent({
         }),
       };
 
-      await apiLaudelino.post("/pedidos", body);
+      const resp = await api.post("/pedidos", JSON.stringify(body));
+      console.log(resp);
     } catch (error) {
       console.log(error);
     }
@@ -98,11 +149,12 @@ export default function DrawerComponent({
                 Seu pedido em
               </h4>
               <h2 style={{ fontWeight: 500, fontSize: "1.4rem" }}>
-                McDonalds - Tubarão
+                {nomeRestaurante || ""}
               </h2>
               <Divider style={{ margin: "1.5rem 0" }} />
-              {itensPedido?.map((item) => (
+              {itensPedido?.map((item, index) => (
                 <div
+                  key={index}
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
@@ -291,9 +343,25 @@ export default function DrawerComponent({
                   }}
                 >
                   <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
+                    Desconto
+                  </h4>
+                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
+                    R$ {valorDesconto.toFixed(2).replace(".", ",")}
+                  </h4>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginTop: ".5rem",
+                  }}
+                >
+                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
                     Taxa de entrega
                   </h4>
-                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>R$ 0,00</h4>
+                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
+                    R$ {valorFrete.toFixed(2).replace(".", ",")}
+                  </h4>
                 </div>
               </div>
             </div>
@@ -307,7 +375,7 @@ export default function DrawerComponent({
               >
                 <h4 style={{ fontWeight: 500, fontSize: "1rem" }}>Total</h4>
                 <h4 style={{ fontWeight: 500, fontSize: "1rem" }}>
-                  R$ {totalPedido.toFixed(2).replace(".", ",")}
+                  R$ {valorTotal.toFixed(2).replace(".", ",")}
                 </h4>
               </div>
               <Button
@@ -333,6 +401,7 @@ export default function DrawerComponent({
         setIsFinalizandoPedido={() => setIsFinalizandoPedido(false)}
         formaSelecionada={formaSelecionada}
         setFormaSelecionada={(forma) => setFormaSelecionada(forma)}
+        userInfos={userInfos}
       />
     </Drawer>
   );
