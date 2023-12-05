@@ -14,7 +14,7 @@ export default function PedidoCard({
         display: "flex",
         flexDirection: "column",
         width: "30rem",
-        border: "1px solid #cbcbcf4b",
+        border: "1px solid #cbcbcf6e",
         borderRadius: ".4rem",
       }}
     >

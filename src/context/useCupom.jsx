@@ -9,22 +9,21 @@ export function CupomProvider({ children }) {
   const [cupomSelecionado, setCupomSelecionado] = useState({});
   const [isCupom, setIsCupom] = useState(false);
 
-  useEffect(() => {
-    const handleSetCupons = () => {
-      const hashCupom = localStorage.getItem("cupom") || "";
-
-      if (hashCupom) {
-        const cupom = getDecrypted(hashCupom);
-        console.log(cupom);
-        setCupons(cupom.listagem);
-        setQtdCupons(cupom.totalDeItens);
-      }
-    };
-    handleSetCupons();
-  }, []);
-
   const handleSetCupomSelecionado = (id) => {
     setCupomSelecionado(id);
+  };
+
+  const handleSetCupons = () => {
+    const hashCupom = localStorage.getItem("cupom");
+
+    console.log("chamuuuu");
+    console.log(localStorage);
+    if (hashCupom) {
+      const cupom = getDecrypted(hashCupom);
+      console.log("cupom", cupom);
+      setCupons(cupom.listagem);
+      setQtdCupons(cupom.totalDeItens);
+    }
   };
 
   const handleSetIsCupom = (openOrNot) => {
@@ -40,6 +39,7 @@ export function CupomProvider({ children }) {
         cupomSelecionado,
         handleSetIsCupom,
         handleSetCupomSelecionado,
+        handleSetCupons,
       }}
     >
       {children}

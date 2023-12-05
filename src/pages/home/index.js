@@ -20,6 +20,8 @@ import "swiper/css/pagination";
 import RestaurantCard from "../../components/RestaurantCard";
 import { useScreenSizeContext } from "../../context/useScreenSize";
 import { apiKauan, apiLaudelino } from "../../service/api";
+import Loading from "../../components/Loading";
+import { useCupomContext } from "../../context/useCupom";
 
 const theme = createTheme({
   palette: {
@@ -242,13 +244,7 @@ const Home = () => {
           <RestaurantCard restaurantes={restaurantes} />
         </div>
       </div>
-      <Backdrop
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={isLoading}
-        onClick={() => setIsLoading(false)}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <Loading isLoading={isLoading} handleStop={() => setIsLoading(false)} />
     </>
   );
 };

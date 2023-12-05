@@ -10,8 +10,77 @@ import {
 } from "@mui/material";
 import AdressImage from "../assets/adress.png";
 import { MagnifyingGlass } from "@phosphor-icons/react";
+import { apiCep, apiKauan } from "../service/api";
+import { useState } from "react";
+import Notification from "./Notification";
+import { getDecrypted } from "../utils/crypto";
 
 export default function DialogCreateAdress({ isOpen, handleClose }) {
+  const [cepSelecionado, setCepSelecionado] = useState("");
+  const [openAlert, setOpenAlert] = useState(false);
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState("");
+  const [logradouro, setLogradouro] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [numero, setNumero] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [complemento, setComplemento] = useState("");
+  const [apelido, setApelido] = useState("");
+  const [uf, setUf] = useState("");
+  const [cep, setCep] = useState("");
+
+  const handleBuscarCep = async () => {
+    try {
+      const cep = cepSelecionado.replace(/\D/g, "");
+      setCep(cep);
+      const resp = await apiCep.get(`/ws/${cep}/json/`);
+      const { bairro, complemento, uf, localidade, logradouro } = resp.data;
+      setLogradouro(logradouro);
+      setBairro(bairro);
+      setCidade(localidade);
+      setComplemento(complemento);
+      setUf(uf);
+    } catch (error) {
+      setType("error");
+      setMessage("Cep inválido!");
+      setOpenAlert(true);
+    }
+  };
+
+  const handleCadastrarEndereco = async () => {
+    try {
+      const token = localStorage.getItem("user");
+      const user = localStorage.getItem("cliente");
+      const decryptedUser = getDecrypted(user);
+      const userId = decryptedUser.cliente.id;
+      console.log(decryptedUser);
+      const data = {
+        nome: apelido,
+        estado: uf,
+        cidade,
+        rua: logradouro,
+        complemento,
+        numeroDaCasa: numero,
+        bairro,
+        cep,
+        id_cliente: userId,
+        cliente: decryptedUser.cliente,
+      };
+      const body = JSON.stringify(data);
+      const resp = await apiKauan.post("/enderecos", body, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(resp);
+    } catch (error) {
+      setType("error");
+      setMessage("erro ao cadastrar endereço!");
+      setOpenAlert(true);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth={"md"}>
       <DialogContent>
@@ -40,6 +109,7 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
               variant="outlined"
               placeholder="Digite seu cep"
               size="small"
+              onChange={(e) => setCepSelecionado(e.target.value)}
               InputProps={{
                 style: {
                   padding: ".3rem .9rem",
@@ -58,6 +128,7 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
               variant="contained"
               color="error"
               size="large"
+              onClick={() => handleBuscarCep()}
             >
               Buscar
             </Button>
@@ -65,6 +136,8 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
           <TextField
             label="Apelido"
             required
+            value={apelido}
+            onChange={(e) => setApelido(e.target.value)}
             style={{
               margin: ".6rem 0",
             }}
@@ -92,6 +165,8 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
               label="Logradouro"
               required
               fullWidth
+              value={logradouro}
+              onChange={(e) => setLogradouro(e.target.value)}
               InputProps={{
                 style: {
                   padding: ".1rem",
@@ -116,6 +191,8 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
               label="Bairro"
               required
               fullWidth
+              value={bairro}
+              onChange={(e) => setBairro(e.target.value)}
               style={{
                 margin: "0 1rem .6rem 0",
               }}
@@ -132,6 +209,8 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
             <TextField
               label="Número"
               required
+              value={numero}
+              onChange={(e) => setNumero(e.target.value)}
               style={{
                 margin: "0 1rem .6rem 0",
               }}
@@ -149,6 +228,8 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
             <TextField
               label="Cidade"
               required
+              value={cidade}
+              onChange={(e) => setCidade(e.target.value)}
               style={{
                 margin: "0 0 .6rem 1rem",
                 width: "18rem",
@@ -176,6 +257,8 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
             <TextField
               fullWidth
               label="Complemento"
+              value={complemento}
+              onChange={(e) => setComplemento(e.target.value)}
               style={{
                 margin: "0 0 .6rem 0",
                 marginTop: ".5rem",
@@ -205,11 +288,18 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
             color="error"
             size="large"
             style={{ padding: ".7rem 1.5rem", marginTop: "1rem" }}
+            onClick={() => handleCadastrarEndereco()}
           >
             Salvar
           </Button>
         </div>
       </DialogContent>
+      <Notification
+        handleClose={() => setOpenAlert(false)}
+        message={message}
+        open={openAlert}
+        type={type}
+      />
     </Dialog>
   );
 }

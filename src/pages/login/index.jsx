@@ -17,6 +17,7 @@ export default function Login() {
   const [messageNotification, setMessageNotification] = useState("");
   const [typeNotification, setTypeNotification] = useState("error");
   const navigate = useNavigate();
+  const { handleSetCupons } = useCupomContext();
 
   const getUser = async (token) => {
     const tokenPayload = jwtDecode(token);
@@ -49,6 +50,7 @@ export default function Login() {
     if (data) {
       const hashCupom = getEncrypted(data);
       localStorage.setItem("cupom", hashCupom);
+      handleSetCupons();
     }
   };
 

@@ -7,6 +7,7 @@ const URL_LAUDELINO = process.env.REACT_APP_URL_LAUDELINO;
 const URL_KAUAN = process.env.REACT_APP_URL_KAUAN;
 const URL_PEDIDO = process.env.REACT_APP_URL_PEDIDO;
 const URL_RAUL = process.env.REACT_APP_URL_RAUL;
+const URL_CEP = process.env.REACT_APP_URL_CEP;
 
 export const apiLaudelino = axios.create({
   baseURL: URL_LAUDELINO,
@@ -26,6 +27,10 @@ export const apiRaul = axios.create({
 
 export const apiKauan = axios.create({
   baseURL: URL_KAUAN,
+});
+
+export const apiCep = axios.create({
+  baseURL: URL_CEP,
 });
 
 //nossa api(pedido)

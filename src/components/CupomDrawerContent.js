@@ -51,7 +51,7 @@ export default function CupomDrawerContent({ setIsCupom }) {
           borderRight: "1px solid rgba(0, 0, 0, 0.12)",
         }}
       >
-        <div
+        {/* <div
           style={{
             display: "flex",
             padding: ".9rem",
@@ -65,8 +65,8 @@ export default function CupomDrawerContent({ setIsCupom }) {
           <Button color="error" disabled={true}>
             Adicionar
           </Button>
-        </div>
-        <Divider style={{ margin: ".5rem 0 1rem 0" }} />
+        </div> */}
+        {/* <Divider style={{ margin: ".5rem 0 1rem 0" }} /> */}
         <div
           style={{
             width: "100%",
@@ -148,7 +148,8 @@ export default function CupomDrawerContent({ setIsCupom }) {
                         margin: "0 1rem 0 0",
                       }}
                     />
-                    <div>
+
+                    <div style={{}}>
                       <h1
                         style={{
                           color: "#585757",
@@ -166,20 +167,12 @@ export default function CupomDrawerContent({ setIsCupom }) {
                     onClick={() => handleSetCupomSelecionado(cupom)}
                   />
                 </div>
-                <h3
-                  style={{
-                    color: "#8d8888",
-                    fontWeight: 400,
-                    fontSize: ".8rem",
-                    marginBottom: "2rem",
-                  }}
-                >
-                  cupom disponível
-                </h3>
+
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
+                    marginTop: "3rem",
                   }}
                 >
                   <h3
@@ -191,6 +184,26 @@ export default function CupomDrawerContent({ setIsCupom }) {
                   >
                     {`Válido até ${cupom.validade[2]}/${cupom.validade[1]}`}
                   </h3>
+                  <div
+                    style={{
+                      color: "#8d8888",
+                      fontWeight: 400,
+                      fontSize: ".8rem",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    Código{" "}
+                    <h1
+                      style={{
+                        fontWeight: 600,
+                        fontSize: "1rem",
+                        marginLeft: ".5rem",
+                      }}
+                    >
+                      {cupom.codigo}
+                    </h1>
+                  </div>
                 </div>
               </div>
               <div

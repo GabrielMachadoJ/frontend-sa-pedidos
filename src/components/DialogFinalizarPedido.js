@@ -1,5 +1,6 @@
 import { Button, Dialog, Divider, IconButton, Paper } from "@mui/material";
 import { CreditCard, House, MapPinLine, Money } from "@phosphor-icons/react";
+import Loading from "./Loading";
 
 export default function DialogFinalizarPedido({
   isFinalizandoPedido,
@@ -8,6 +9,8 @@ export default function DialogFinalizarPedido({
   setFormaSelecionada,
   handleFinalizarPedido,
   userInfos,
+  isLoading,
+  handleStop,
 }) {
   return (
     <Dialog
@@ -147,6 +150,7 @@ export default function DialogFinalizarPedido({
           </Button>
         </div>
       </div>
+      <Loading isLoading={isLoading} handleStop={handleStop} />
     </Dialog>
   );
 }

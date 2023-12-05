@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { CaretRight, Clock, House, Ticket } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCupomContext } from "../context/useCupom";
 import { usePedidoContext } from "../context/usePedido";
 import { api, apiLaudelino, apiRaul } from "../service/api";
@@ -17,6 +17,8 @@ import { getDecrypted } from "../utils/crypto";
 import CupomDrawerContent from "./CupomDrawerContent";
 import DialogCreateAdress from "./DialogCreateAdress";
 import DialogFinalizarPedido from "./DialogFinalizarPedido";
+import Notification from "./Notification";
+import Loading from "./Loading";
 
 export default function DrawerComponent({
   isPedidoOpen,
@@ -37,12 +39,21 @@ export default function DrawerComponent({
     useCupomContext();
   const [userInfos, setUserInfos] = useState({});
   const [isCadastrarEndereco, setIsCadastrarEndereco] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
   const [valorDesconto, setValorDesconto] = useState(0);
   const [valorTotal, setValorTotal] = useState(0);
   const [valorFrete, setValorFrete] = useState(0);
   const [desconto, setDesconto] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    if (isPedidoOpen) {
+      getUserInfos();
+    }
+  }, [isPedidoOpen]);
+
+  const getUserInfos = () => {
     try {
       const userCrypto = localStorage.getItem("cliente") || "";
       if (userCrypto) {
@@ -53,43 +64,46 @@ export default function DrawerComponent({
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    if (Object.entries(cupomSelecionado).length !== 0) {
-      const valorDesconto = cupomSelecionado
+    let valorDesconto = 0;
+    if (
+      Object.entries(cupomSelecionado).length !== 0 &&
+      cupomSelecionado.id !== 0
+    ) {
+      valorDesconto = cupomSelecionado
         ? totalPedido * (cupomSelecionado.percentualDeDesconto / 100)
         : 0;
-      setValorDesconto(valorDesconto);
-
       setDesconto(cupomSelecionado.percentualDeDesconto);
-
-      const valorTotal = totalPedido + valorFrete - valorDesconto;
-      setValorTotal(valorTotal);
+    } else {
+      valorDesconto = 0;
     }
+    setValorDesconto(valorDesconto);
+    const valorTotal = totalPedido + valorFrete - valorDesconto;
+    setValorTotal(valorTotal);
   }, [cupomSelecionado]);
 
-  useEffect(() => {
-    if (cepRestaurante) {
-      calcularFrete();
-    }
-  }, [cepRestaurante]);
-
   const calcularFrete = async () => {
-    const cepCliente = userInfos.cep?.replace(/\D/g, "");
-    if (cepCliente && cepRestaurante) {
-      const resp = await apiRaul.get(
-        `/frete/cepDeOrigem/${cepRestaurante}/cepDeDestino/${cepCliente}`
-      );
-      const valorFrete = resp.data.custo;
-      const valorTotal = totalPedido + valorFrete - valorDesconto;
-      setValorTotal(valorTotal);
-      setValorFrete(valorFrete);
+    try {
+      const cepCliente = userInfos.cep?.replace(/\D/g, "");
+      if (cepCliente && cepRestaurante) {
+        const resp = await apiRaul.get(
+          `/frete/cepDeOrigem/${cepRestaurante}/cepDeDestino/${cepCliente}`
+        );
+        const valorFrete = resp.data.custo;
+        const valorTotal = totalPedido + valorFrete - valorDesconto;
+        setValorTotal(valorTotal);
+        setValorFrete(valorFrete);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const handleFinalizarPedido = async () => {
     try {
+      setIsLoading(true);
       const user = localStorage.getItem("cliente");
       const decryptedUser = getDecrypted(user);
       console.log(decryptedUser);
@@ -116,9 +130,15 @@ export default function DrawerComponent({
       };
 
       const resp = await api.post("/pedidos", JSON.stringify(body));
-      console.log(resp);
+      if (resp.status === 201) {
+        setOpenAlert(true);
+        navigate("/pedidos");
+        window.location.reload();
+      }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -345,8 +365,16 @@ export default function DrawerComponent({
                   <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
                     Desconto
                   </h4>
-                  <h4 style={{ fontWeight: 400, fontSize: "1rem" }}>
-                    R$ {valorDesconto.toFixed(2).replace(".", ",")}
+                  <h4
+                    style={{
+                      color: valorDesconto > 0 ? "#d32f2f" : "",
+                      fontWeight: 400,
+                      fontSize: "1rem",
+                    }}
+                  >
+                    {`${valorDesconto <= 0 ? "" : "-"}R$ ${valorDesconto
+                      .toFixed(2)
+                      .replace(".", ",")}`}
                   </h4>
                 </div>
                 <div
@@ -402,6 +430,14 @@ export default function DrawerComponent({
         formaSelecionada={formaSelecionada}
         setFormaSelecionada={(forma) => setFormaSelecionada(forma)}
         userInfos={userInfos}
+        isLoading={isLoading}
+        handleStop={() => setIsLoading(false)}
+      />
+      <Notification
+        handleClose={() => setOpenAlert(false)}
+        message={"Pedido gerado!"}
+        open={openAlert}
+        type={"success"}
       />
     </Drawer>
   );

@@ -54,6 +54,7 @@ export default function Header() {
 
   const handleSignOut = () => {
     window.localStorage.clear();
+    window.location.reload();
     navigate("/");
   };
 
