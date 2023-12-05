@@ -5,7 +5,9 @@ export default function PedidoCard({
   status,
   nomeRestaurante,
   opcao,
-}) {
+})
+{
+  const statusFormatado = status.replace(/_/g, ' ');
   return (
     <div
       style={{
@@ -46,7 +48,7 @@ export default function PedidoCard({
           <span
             style={{ fontSize: ".9rem", fontWeight: 500, color: "#979494" }}
           >
-            {status}
+            {statusFormatado}
           </span>
         </div>
       </div>
