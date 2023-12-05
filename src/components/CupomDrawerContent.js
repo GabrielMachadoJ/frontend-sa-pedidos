@@ -7,15 +7,11 @@ import {
   TextField,
 } from "@mui/material";
 import { CaretLeft, Lock, Ticket } from "@phosphor-icons/react";
-import { useState } from "react";
 import { useCupomContext } from "../context/useCupom";
 
 export default function CupomDrawerContent({ setIsCupom }) {
-  const [codigoCupom, setCodigoCupom] = useState("");
   const { cupons, cupomSelecionado, handleSetCupomSelecionado } =
     useCupomContext();
-
-  const handleSelectCupom = () => {};
 
   return (
     <div

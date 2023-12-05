@@ -1,4 +1,3 @@
-import { Ticket } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { Grid, Skeleton } from "@mui/material";
 import { Link } from "react-router-dom";
