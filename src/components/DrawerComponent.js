@@ -6,8 +6,9 @@ import {
   IconButton,
   Paper,
   Radio,
+
 } from "@mui/material";
-import { CaretRight, Clock, House, Ticket } from "@phosphor-icons/react";
+import { CaretRight, Clock, House, Ticket, Trash } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCupomContext } from "../context/useCupom";
@@ -29,11 +30,13 @@ export default function DrawerComponent({
   const [isFinalizandoPedido, setIsFinalizandoPedido] = useState(false);
   const {
     totalPedido,
-    itensPedido,
     idCardapio,
     idRestaurante,
     nomeRestaurante,
     cepRestaurante,
+    handleSetItens,
+    itensPedido,
+    handleCalculaTotalPedido,
   } = usePedidoContext();
   const { cupomSelecionado, qtdCupons, isCupom, handleSetIsCupom } =
     useCupomContext();
@@ -100,6 +103,20 @@ export default function DrawerComponent({
       console.log(error);
     }
   };
+
+  const handleRemoveOpcao = (index) => {
+    const novoArray = [...itensPedido];
+    novoArray.splice(index, 1);
+    handleSetItens(novoArray);
+    if (novoArray.length === 0 && localStorage.getItem("id_restaurante")) {
+      localStorage.removeItem("id_restaurante");
+    }
+  };
+
+ const handleCalcula = (index) => {
+    handleRemoveOpcao(index);
+    handleCalculaTotalPedido();
+ };
 
   const handleFinalizarPedido = async () => {
     try {
@@ -172,26 +189,27 @@ export default function DrawerComponent({
                 {nomeRestaurante || ""}
               </h2>
               <Divider style={{ margin: "1.5rem 0" }} />
-              {itensPedido?.map((item, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    fontSize: ".9rem",
-                    marginBottom: "1rem",
-                  }}
-                >
-                  <h3
-                    style={{ fontWeight: 500 }}
-                  >{`${item.qtd}x ${item.opcao.nome}`}</h3>
-                  <h3 style={{ fontWeight: 500 }}>{`R$ ${(
-                    item.opcao.preco * item.qtd
-                  )
-                    .toFixed(2)
-                    .replace(".", ",")}`}</h3>
+              {itensPedido.length > 0 ? (
+                <div>
+                  {itensPedido.map((item, index) => (
+                    <div key={index} style={{ marginBottom: "1rem", display: 'flex', alignItems: 'center' }}>
+                      <div style={{ flexGrow: 1, whiteSpace: 'nowrap' }}>
+                        <h3 style={{ fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', marginRight: '1rem' }}>
+                          {`${item.qtd}x ${item.opcao.nome}`}
+                        </h3>
+                        <h3 style={{ fontWeight: 500 }}>
+                          {`R$ ${(item.opcao.preco * item.qtd).toFixed(2).replace(".", ",")}`}
+                        </h3>
+                      </div>
+                      <IconButton onClick={() => handleCalcula(index)}>
+                        <Trash style={{ color: 'red' }} />
+                      </IconButton>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              ) : (
+                <p>Nenhum item adicionado ao pedido.</p>
+              )}
               <Divider style={{ margin: "1.5rem 0" }} />
               <div
                 style={{

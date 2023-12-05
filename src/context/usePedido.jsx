@@ -35,6 +35,10 @@ export function PedidoProvider({ children }) {
     }
   };
 
+  const handleSetItens = (op) => {
+    setItensPedido(op);
+  }
+
   const handleCalculaTotalPedido = () => {
     let total = 0;
     itensPedido.forEach((item) => {
@@ -79,6 +83,8 @@ export function PedidoProvider({ children }) {
         handleChangeIdCardapio,
         handleSetNomeRestaurante,
         handleSetCepRestaurante,
+        handleSetItens,
+        handleCalculaTotalPedido,
       }}
     >
       {children}
