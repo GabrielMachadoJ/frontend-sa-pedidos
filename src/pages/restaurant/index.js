@@ -13,15 +13,16 @@ import { Minus, Plus } from "@phosphor-icons/react";
 import { usePedidoContext } from "../../context/usePedido";
 import { apiLaudelino } from "../../service/api";
 import Header from "../../components/Header";
+import Notification from "../../components/Notification";
 
 export default function Restaurant() {
   const location = useLocation();
   const idRestaurante = location.pathname.split("/")[2];
   const { name, descricaoRestaurante, cep } = location.state;
-  const [opcoesPorSecao, setOpcoesPorSecao] = useState({});
   const [openModalOpcao, setOpenModalOpcao] = useState(false);
   const [opcaoSelecionada, setOpcaoSelecionada] = useState({});
   const [quantidadeSelecionada, setQuantidadeSelecionada] = useState(1);
+  const [opcoesPorSecao, setOpcoesPorSecao] = useState({});
   const {
     handleSetItensPedido,
     handleChangeIdCardapio,
@@ -34,6 +35,17 @@ export default function Restaurant() {
     useState(null);
   const [response, setResponse] = useState(null);
   const { itensPedido, handleSetIdRestaurante } = usePedidoContext(); // Adicione esta linha
+  const [responseData, setResponseData] = useState(null);
+  const [opcoesPermitidas, setOpcoesPermitidas] = useState([]);
+  const [notification, setNotification] = useState({
+    open: false,
+    message: '',
+    type: 'error',
+  });
+
+  const handleCloseNotification = () => {
+    setNotification({ ...notification, open: false });
+  };
 
   useEffect(() => {
     const getCardapioRestaurante = async () => {
@@ -43,15 +55,21 @@ export default function Restaurant() {
           `/cardapios?id-restaurante=${idRestaurante}`
         );
         const responseData = resp.data.listagem[0];
+        setResponseData(responseData);
         handleChangeIdCardapio(responseData?.id);
         setResponse(resp);
+
+        const opcoesIds = responseData?.opcoes.map((opcao) => opcao.id);
+
+        if (itensPedido.length === 0) {
+          setOpcoesPermitidas(opcoesIds || []);
+        }
 
         const opSecao = {};
         const opcoesPromises = [];
 
         for (const opcao of responseData?.opcoes || []) {
-          const nomeSecao = opcao.secao.nome;
-
+          const nomeSecao = opcao.secao.nome
           if (!opSecao[nomeSecao]) {
             opSecao[nomeSecao] = [];
           }
@@ -77,7 +95,7 @@ export default function Restaurant() {
     if (Object.keys(opcoesPorSecao).length === 0) {
       getCardapioRestaurante();
     }
-  }, [idRestaurante, handleChangeIdCardapio]);
+  }, [idRestaurante, handleChangeIdCardapio, itensPedido]);
 
   useEffect(() => {
     if (nomeRestaurante) {
@@ -94,13 +112,34 @@ export default function Restaurant() {
   };
 
   const handleAddOpcao = (op) => {
-    const opcaoExistente = itensPedido.find((item) => item.opcao.id === op.id);
+    const idRestauranteSelecionado = localStorage.getItem('id_restaurante') || '';
+    if (idRestauranteSelecionado) {
+      if (idRestauranteSelecionado !== idRestaurante) {
+        setNotification({
+          open: true,
+          message: "Não é possível adicionar uma opção de um restaurante diferente.",
+          type: 'error',
+        });
+        return;
+      }
+      const opcaoExistente = itensPedido.find((item) => item.opcao.id === op.id);
 
-    setOpcaoExistenteNoCarrinho(opcaoExistente);
-    setQuantidadeSelecionada(opcaoExistente ? opcaoExistente.qtd : 1);
+      setOpcaoExistenteNoCarrinho(opcaoExistente);
+      setQuantidadeSelecionada(opcaoExistente ? opcaoExistente.qtd : 1);
 
-    setOpcaoSelecionada(op);
-    setOpenModalOpcao(true);
+      setOpcaoSelecionada(op);
+      setOpenModalOpcao(true);
+
+    } else {
+      localStorage.setItem('id_restaurante', idRestaurante)
+      const opcaoExistente = itensPedido.find((item) => item.opcao.id === op.id);
+
+      setOpcaoExistenteNoCarrinho(opcaoExistente);
+      setQuantidadeSelecionada(opcaoExistente ? opcaoExistente.qtd : 1);
+
+      setOpcaoSelecionada(op);
+      setOpenModalOpcao(true);
+    }
   };
 
   const handleAddItem = () => {
@@ -225,6 +264,12 @@ export default function Restaurant() {
             border: "2px solid #ebe2e2",
           }}
         >
+          <Notification
+            handleClose={handleCloseNotification}
+            open={notification.open}
+            message={notification.message}
+            type={notification.type}
+          />
           <img
             src={`https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${idRestaurante}/foto`}
             alt="Imagem Redonda"
@@ -236,12 +281,12 @@ export default function Restaurant() {
       </div>
       {response
         ? Object.keys(opcoesPorSecao).map((secaoNome) => (
-            <SecaoComponent
-              key={secaoNome}
-              secaoNome={secaoNome}
-              opcoes={opcoesPorSecao[secaoNome]}
-            />
-          ))
+          <SecaoComponent
+            key={secaoNome}
+            secaoNome={secaoNome}
+            opcoes={opcoesPorSecao[secaoNome]}
+          />
+        ))
         : ""}
       <Dialog
         open={openModalOpcao}
