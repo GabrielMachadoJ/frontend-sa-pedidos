@@ -113,47 +113,41 @@ export default function Restaurant() {
 
   const handleAddOpcao = (op) => {
     const idRestauranteSelecionado = localStorage.getItem('id_restaurante') || '';
-    if (idRestauranteSelecionado) {
-      if (idRestauranteSelecionado !== idRestaurante) {
-        setNotification({
-          open: true,
-          message: "Não é possível adicionar uma opção de um restaurante diferente.",
-          type: 'error',
-        });
-        return;
-      }
-      const opcaoExistente = itensPedido.find((item) => item.opcao.id === op.id);
 
-      setOpcaoExistenteNoCarrinho(opcaoExistente);
-      setQuantidadeSelecionada(opcaoExistente ? opcaoExistente.qtd : 1);
+    if (idRestauranteSelecionado && idRestauranteSelecionado !== idRestaurante) {
+      setNotification({
+        open: true,
+        message: "Não é possível adicionar uma opção de um restaurante diferente.",
+        type: 'error',
+      });
+      return;
+    }
 
-      setOpcaoSelecionada(op);
-      setOpenModalOpcao(true);
+    const opcaoExistente = itensPedido.find((item) => item.opcao.id === op.id);
 
-    } else {
-      localStorage.setItem('id_restaurante', idRestaurante)
-      const opcaoExistente = itensPedido.find((item) => item.opcao.id === op.id);
+    setOpcaoExistenteNoCarrinho(opcaoExistente);
+    setQuantidadeSelecionada(opcaoExistente ? opcaoExistente.qtd : 1);
+    setOpcaoSelecionada(op);
+    setOpenModalOpcao(true);
+  };
 
-      setOpcaoExistenteNoCarrinho(opcaoExistente);
-      setQuantidadeSelecionada(opcaoExistente ? opcaoExistente.qtd : 1);
+  const handleAdicionarAoCarrinho = () => {
+    if (opcaoSelecionada) {
+      handleSetItensPedido({
+        opcao: opcaoSelecionada,
+        qtd: quantidadeSelecionada,
+      });
+      handleSetNomeRestaurante(name);
+      setQuantidadeSelecionada(1);
 
-      setOpcaoSelecionada(op);
-      setOpenModalOpcao(true);
+      localStorage.setItem('id_restaurante', idRestaurante);
+
+      handleCloseModal();
     }
   };
 
   const handleAddItem = () => {
     setQuantidadeSelecionada((prevQuantidade) => prevQuantidade + 1);
-  };
-
-  const handleAdicionarAoCarrinho = () => {
-    handleSetItensPedido({
-      opcao: opcaoSelecionada,
-      qtd: quantidadeSelecionada,
-    });
-    handleSetNomeRestaurante(name);
-    handleCloseModal();
-    setQuantidadeSelecionada(1);
   };
 
   const handleRemoveItemQtd = () => {
