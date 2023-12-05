@@ -53,13 +53,13 @@ export default function DrawerComponent({
     }
   }, [isPedidoOpen]);
 
-  const getUserInfos = () => {
+  const getUserInfos = async () => {
     try {
       const userCrypto = localStorage.getItem("cliente") || "";
       if (userCrypto) {
         const decryptedUser = getDecrypted(userCrypto);
         setUserInfos(decryptedUser);
-        calcularFrete();
+        await calcularFrete();
       }
     } catch (error) {
       console.log(error);
@@ -82,7 +82,7 @@ export default function DrawerComponent({
     setValorDesconto(valorDesconto);
     const valorTotal = totalPedido + valorFrete - valorDesconto;
     setValorTotal(valorTotal);
-  }, [cupomSelecionado]);
+  }, [cupomSelecionado, totalPedido, valorFrete]);
 
   const calcularFrete = async () => {
     try {
@@ -92,9 +92,9 @@ export default function DrawerComponent({
           `/frete/cepDeOrigem/${cepRestaurante}/cepDeDestino/${cepCliente}`
         );
         const valorFrete = resp.data.custo;
+        setValorFrete(valorFrete);
         const valorTotal = totalPedido + valorFrete - valorDesconto;
         setValorTotal(valorTotal);
-        setValorFrete(valorFrete);
       }
     } catch (error) {
       console.log(error);
