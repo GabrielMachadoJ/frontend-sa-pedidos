@@ -23,6 +23,7 @@ import { usePedidoContext } from "../context/usePedido";
 import { useScreenSizeContext } from "../context/useScreenSize";
 import DrawerComponent from "./DrawerComponent";
 import { getDecrypted } from "../utils/crypto";
+import { useCupomContext } from "../context/useCupom";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -31,6 +32,7 @@ export default function Header() {
   const [nomeCliente, setNomeCliente] = useState("X");
   const { totalPedido } = usePedidoContext();
   const { screenWidth } = useScreenSizeContext();
+  const { handleSetIsCupom } = useCupomContext();
   const navigate = useNavigate();
   const open = Boolean(anchorEl);
 
@@ -57,6 +59,15 @@ export default function Header() {
 
   const handleGoToHome = () => {
     navigate("/home");
+  };
+
+  const handleGoToPedido = () => {
+    navigate("/pedidos");
+  };
+
+  const handleGoToCupom = () => {
+    setIsPedidoOpen(true);
+    handleSetIsCupom(true);
   };
 
   return (
@@ -178,7 +189,7 @@ export default function Header() {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => handleGoToPedido()}>
             <ShoppingCartSimple
               color="#FF2A00"
               style={{ marginRight: ".5rem" }}
@@ -186,25 +197,13 @@ export default function Header() {
             />{" "}
             Pedidos
           </MenuItem>
-          <MenuItem onClick={() => {}}>
+          <MenuItem onClick={() => handleGoToCupom()}>
             <Ticket
               color="#FF2A00"
               style={{ marginRight: ".5rem" }}
               size={24}
             />{" "}
             Cupons
-          </MenuItem>
-          <MenuItem onClick={() => {}}>
-            <CreditCard
-              color="#FF2A00"
-              style={{ marginRight: ".5rem" }}
-              size={24}
-            />{" "}
-            Pagamento
-          </MenuItem>
-          <MenuItem onClick={() => {}}>
-            <User color="#FF2A00" style={{ marginRight: ".5rem" }} size={24} />{" "}
-            Perfil
           </MenuItem>
           <Divider />
           <MenuItem onClick={handleSignOut}>

@@ -33,8 +33,8 @@ export default function DrawerComponent({
     nomeRestaurante,
     cepRestaurante,
   } = usePedidoContext();
-  const [isCupom, setIsCupom] = useState(false);
-  const { cupomSelecionado, qtdCupons } = useCupomContext();
+  const { cupomSelecionado, qtdCupons, isCupom, handleSetIsCupom } =
+    useCupomContext();
   const [userInfos, setUserInfos] = useState({});
   const [isCadastrarEndereco, setIsCadastrarEndereco] = useState(false);
   const [valorDesconto, setValorDesconto] = useState(0);
@@ -135,7 +135,7 @@ export default function DrawerComponent({
         }}
       >
         {isCupom ? (
-          <CupomDrawerContent setIsCupom={() => setIsCupom(false)} />
+          <CupomDrawerContent setIsCupom={() => handleSetIsCupom(false)} />
         ) : (
           <>
             <div>
@@ -315,7 +315,7 @@ export default function DrawerComponent({
                     >{`${qtdCupons || 1} cupom disponível`}</h3>
                   </div>
                 </div>
-                <IconButton onClick={() => setIsCupom(true)}>
+                <IconButton onClick={() => handleSetIsCupom(true)}>
                   <CaretRight
                     size={22}
                     color="#d32f2f"

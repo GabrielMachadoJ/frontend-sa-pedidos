@@ -3,6 +3,7 @@ import Login from "../pages/login";
 import Home from "../pages/home";
 import Restaurant from "../pages/restaurant";
 import { useEffect } from "react";
+import PedidosPage from "../pages/pedidos";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("user");
@@ -31,6 +32,11 @@ export function Main() {
           index
           path="/restaurant/:id"
           element={<ProtectedRoute element={<Restaurant />} />}
+        />
+        <Route
+          index
+          path="/pedidos"
+          element={<ProtectedRoute element={<PedidosPage />} />}
         />
       </Routes>
     </BrowserRouter>
