@@ -13,6 +13,8 @@ export default function RestaurantCard(params) {
     }
   }, [restauranteData]);
 
+  const URL = process.env.REACT_APP_URL_LAUDELINO;
+
   return restaurantes.length > 0 ? (
     <Grid container spacing={2}>
       {restaurantes.map(
@@ -42,7 +44,7 @@ export default function RestaurantCard(params) {
                     style={{
                       width: "100%",
                       height: "7rem",
-                      backgroundImage: `url(https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${rest.id}/foto)`,
+                      backgroundImage: `url(${URL}/restaurantes/id/${rest.id}/foto)`,
                       backgroundSize: "cover",
                       backgroundPosition: "center",
                       padding: ".5rem",
@@ -77,11 +79,13 @@ export default function RestaurantCard(params) {
                         fontSize: "1rem",
                       }}
                     >
-                      <span style={{
-                         color: "#ff9558",
-                         fontWeight: "bold" }}>
-                          </span>{" "} {rest.categoria.nome}
-                          {" "}
+                      <span
+                        style={{
+                          color: "#ff9558",
+                          fontWeight: "bold",
+                        }}
+                      ></span>{" "}
+                      {rest.categoria.nome}{" "}
                     </span>
                   </div>
                 </div>

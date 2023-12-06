@@ -10,6 +10,8 @@ export function CupomProvider({ children }) {
   const [cupomSelecionado, setCupomSelecionado] = useState({});
   const [isCupom, setIsCupom] = useState(false);
 
+  const URL = process.env.REACT_APP_URL_KAUAN;
+
   const handleSetCupomSelecionado = (id) => {
     setCupomSelecionado(id);
   };
@@ -25,14 +27,11 @@ export function CupomProvider({ children }) {
   };
 
   const getCupom = async (token) => {
-    const response = await apiKauan.get(
-      "https://gestao-de-cadastros-api-production.up.railway.app/cupons",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiKauan.get(`${URL}cupons`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const data = response.data;
 
     if (data) {

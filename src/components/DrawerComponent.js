@@ -66,7 +66,7 @@ export default function DrawerComponent({
     setAnchorEl(null);
   };
   const { getCupom } = useCupomContext();
-  const { adresses, handleSelectAdress, adress, selectedAdress, getAdress } =
+  const { adresses, handleSelectAdress, selectedAdress, getAdress } =
     useAdressContext();
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export default function DrawerComponent({
 
   const calcularFrete = async () => {
     try {
-      const cepCliente = adress.cep?.replace(/\D/g, "");
+      const cepCliente = selectedAdress.cep?.replace(/\D/g, "");
       if (cepCliente && cepRestaurante) {
         const resp = await apiRaul.get(
           `/frete/cepDeOrigem/${cepRestaurante}/cepDeDestino/${cepCliente}`

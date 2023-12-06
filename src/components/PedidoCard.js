@@ -5,9 +5,9 @@ export default function PedidoCard({
   status,
   nomeRestaurante,
   opcao,
-})
-{
-  const statusFormatado = status.replace(/_/g, ' ');
+}) {
+  const URL = process.env.REACT_APP_URL_LAUDELINO;
+  const statusFormatado = status.replace(/_/g, " ");
   return (
     <div
       style={{
@@ -32,7 +32,7 @@ export default function PedidoCard({
           }}
         >
           <img
-            src={`https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${idRestaurante}/foto`}
+            src={`${URL}restaurantes/id/${idRestaurante}/foto`}
             alt="Imagem Redonda"
             style={{
               width: "100%",
