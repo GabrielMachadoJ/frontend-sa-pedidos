@@ -49,6 +49,11 @@ export default function DrawerComponent({
   const [desconto, setDesconto] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [notification, setNotification] = useState({
+    open: false,
+    message: '',
+    type: 'error',
+  });
 
   useEffect(() => {
     if (isPedidoOpen) {
@@ -147,13 +152,20 @@ export default function DrawerComponent({
       };
 
       const resp = await api.post("/pedidos", JSON.stringify(body));
-      if (resp.status === 201) {
+      console.log(resp);
+
+      if (resp.status === 201 && setTimeout(500)) {
         setOpenAlert(true);
         navigate("/pedidos");
         window.location.reload();
       }
     } catch (error) {
       console.log(error);
+      setNotification({
+        open: true,
+        message: "Não é possível criar um pedido. Verifique todas as informações.",
+        type: 'error',
+      });
     } finally {
       setIsLoading(false);
     }
