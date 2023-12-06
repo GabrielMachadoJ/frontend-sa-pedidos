@@ -16,11 +16,8 @@ export function CupomProvider({ children }) {
   const handleSetCupons = () => {
     const hashCupom = localStorage.getItem("cupom");
 
-    console.log("chamuuuu");
-    console.log(localStorage);
     if (hashCupom) {
       const cupom = getDecrypted(hashCupom);
-      console.log("cupom", cupom);
       setCupons(cupom.listagem);
       setQtdCupons(cupom.totalDeItens);
     }

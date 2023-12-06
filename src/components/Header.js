@@ -37,11 +37,11 @@ export default function Header() {
   const open = Boolean(anchorEl);
 
   useEffect(() => {
-    const hashUser = localStorage.getItem("cliente") || "";
+    const hashUser = localStorage.getItem("user") || "";
 
     if (hashUser) {
       const user = getDecrypted(hashUser);
-      setNomeCliente(user.cliente.nome);
+      setNomeCliente(user.nome);
     }
   }, []);
 

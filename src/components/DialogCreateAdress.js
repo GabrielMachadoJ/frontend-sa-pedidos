@@ -49,11 +49,10 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
 
   const handleCadastrarEndereco = async () => {
     try {
-      const token = localStorage.getItem("user");
-      const user = localStorage.getItem("cliente");
+      const token = localStorage.getItem("token");
+      const user = localStorage.getItem("user");
       const decryptedUser = getDecrypted(user);
-      const userId = decryptedUser.cliente.id;
-      console.log(decryptedUser);
+      const userId = decryptedUser.id;
       const data = {
         nome: apelido,
         estado: uf,
@@ -64,7 +63,7 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
         bairro,
         cep,
         id_cliente: userId,
-        cliente: decryptedUser.cliente,
+        cliente: decryptedUser,
       };
       const body = JSON.stringify(data);
       const resp = await apiKauan.post("/enderecos", body, {

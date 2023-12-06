@@ -23,9 +23,9 @@ export default function PedidosPage() {
   const getPedidos = async () => {
     try {
       setIsLoading(true);
-      const user = localStorage.getItem("cliente");
+      const user = localStorage.getItem("user");
       const decryptedUser = getDecrypted(user);
-      const idCliente = decryptedUser.cliente.id;
+      const idCliente = decryptedUser.id;
       const response = await api.get(
         `/pedidos?status=${statusSelecionado}&resumo=0&id-cliente=${idCliente}`
       );

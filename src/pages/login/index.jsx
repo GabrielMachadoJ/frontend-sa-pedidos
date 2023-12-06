@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import Notification from "../../components/Notification";
 import { useCupomContext } from "../../context/useCupom";
 import { getEncrypted } from "../../utils/crypto";
+import { useAdressContext } from "../../context/useAdress";
 
 export default function Login() {
   const { screenWidth } = useScreenSizeContext();
@@ -18,22 +19,24 @@ export default function Login() {
   const [typeNotification, setTypeNotification] = useState("error");
   const navigate = useNavigate();
   const { handleSetCupons } = useCupomContext();
+  const { getAdress } = useAdressContext();
 
   const getUser = async (token) => {
     const tokenPayload = jwtDecode(token);
     const idCliente = tokenPayload.idDoCliente;
-    const respCliente = await apiKauan.get(
-      `/enderecos?idDoCliente=${idCliente}&pagina=0`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    const userInfos = respCliente.data?.content[0];
-    const cryptoUserInfos = getEncrypted(userInfos);
-    localStorage.setItem("cliente", cryptoUserInfos);
-    getCupom(token);
+    const resp = await apiKauan.get(`/clientes/id/${idCliente}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (resp.status === 200) {
+      const userInfos = resp.data;
+      const cryptoUserInfos = getEncrypted(userInfos);
+      localStorage.setItem("user", cryptoUserInfos);
+      getCupom(token);
+      getAdress(idCliente, token);
+    }
   };
 
   const getCupom = async (token) => {
@@ -62,11 +65,10 @@ export default function Login() {
       };
       const resp = await apiKauan.post("/auth", body);
       const token = resp.data.token;
-      window.localStorage.setItem("user", token);
+      localStorage.setItem("token", token);
       await getUser(token);
       navigate("/home");
     } catch (error) {
-      console.log(error);
       setOpenNotification(true);
       setMessageNotification("Erro ao efetuar o login!");
       setTypeNotification("error");

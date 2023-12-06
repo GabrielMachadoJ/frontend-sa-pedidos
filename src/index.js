@@ -5,12 +5,15 @@ import "./index.css";
 import { ScreenSizeProvider } from "./context/useScreenSize";
 import { PedidoProvider } from "./context/usePedido";
 import { CupomProvider } from "./context/useCupom";
+import { AdressProvider } from "./context/useAdress";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ScreenSizeProvider>
     <CupomProvider>
       <PedidoProvider>
-        <App />
+        <AdressProvider>
+          <App />
+        </AdressProvider>
       </PedidoProvider>
     </CupomProvider>
   </ScreenSizeProvider>

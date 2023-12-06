@@ -8,7 +8,7 @@ export default function DialogFinalizarPedido({
   formaSelecionada,
   setFormaSelecionada,
   handleFinalizarPedido,
-  userInfos,
+  adress,
   isLoading,
   handleStop,
 }) {
@@ -40,36 +40,38 @@ export default function DialogFinalizarPedido({
           >
             <MapPinLine size={60} color="#6eb654" />
             <Divider orientation="vertical" />
-            <div
-              style={{
-                marginLeft: "1rem",
-              }}
-            >
-              <h1
+            {adress && (
+              <div
                 style={{
-                  fontSize: "1.05rem",
-                  fontWeight: 600,
+                  marginLeft: "1rem",
                 }}
               >
-                {userInfos.nome}
-              </h1>
-              <h3
-                style={{
-                  fontWeight: 400,
-                  fontSize: "1rem",
-                }}
-              >
-                {`${userInfos.rua}, ${userInfos.cep} - ${userInfos.bairro}, ${userInfos.cidade} - ${userInfos.estado}`}
-              </h3>
-              <h3
-                style={{
-                  fontWeight: 400,
-                  fontSize: ".9rem",
-                }}
-              >
-                {userInfos.complemento || ""}
-              </h3>
-            </div>
+                <h1
+                  style={{
+                    fontSize: "1.05rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  {adress.nome}
+                </h1>
+                <h3
+                  style={{
+                    fontWeight: 400,
+                    fontSize: "1rem",
+                  }}
+                >
+                  {`${adress.rua}, ${adress.cep} - ${adress.bairro}, ${adress.cidade} - ${adress.estado}`}
+                </h3>
+                <h3
+                  style={{
+                    fontWeight: 400,
+                    fontSize: ".9rem",
+                  }}
+                >
+                  {adress.complemento || ""}
+                </h3>
+              </div>
+            )}
           </div>
           <Divider />
           <div
