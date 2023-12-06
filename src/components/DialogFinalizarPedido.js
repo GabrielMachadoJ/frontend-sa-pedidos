@@ -8,11 +8,10 @@ export default function DialogFinalizarPedido({
   formaSelecionada,
   setFormaSelecionada,
   handleFinalizarPedido,
-  adress,
+  address,
   isLoading,
   handleStop,
 }) {
-
   return (
     <Dialog
       open={isFinalizandoPedido}
@@ -41,7 +40,7 @@ export default function DialogFinalizarPedido({
           >
             <MapPinLine size={60} color="#6eb654" />
             <Divider orientation="vertical" />
-            {adress && (
+            {address && (
               <div
                 style={{
                   marginLeft: "1rem",
@@ -53,7 +52,7 @@ export default function DialogFinalizarPedido({
                     fontWeight: 600,
                   }}
                 >
-                  {adress.nome}
+                  {address.nome}
                 </h1>
                 <h3
                   style={{
@@ -61,7 +60,7 @@ export default function DialogFinalizarPedido({
                     fontSize: "1rem",
                   }}
                 >
-                  {`${adress.rua}, ${adress.cep} - ${adress.bairro}, ${adress.cidade} - ${adress.estado}`}
+                  {`${address.rua}, ${address.cep} - ${address.bairro}, ${address.cidade} - ${address.estado}`}
                 </h3>
                 <h3
                   style={{
@@ -69,7 +68,7 @@ export default function DialogFinalizarPedido({
                     fontSize: ".9rem",
                   }}
                 >
-                  {adress.complemento || ""}
+                  {address.complemento || ""}
                 </h3>
               </div>
             )}

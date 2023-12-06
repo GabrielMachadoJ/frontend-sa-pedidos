@@ -35,7 +35,7 @@ export default function PedidoCard({
           }}
         >
           <img
-            src={`${URL}restaurantes/id/${idRestaurante}/foto`}
+            src={`${URL}/restaurantes/id/${idRestaurante}/foto`}
             alt="Imagem Redonda"
             style={{
               width: "100%",

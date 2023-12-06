@@ -25,10 +25,10 @@ import { usePedidoContext } from "../context/usePedido";
 import { api, apiRaul } from "../service/api";
 import { getDecrypted } from "../utils/crypto";
 import CupomDrawerContent from "./CupomDrawerContent";
-import DialogCreateAdress from "./DialogCreateAdress";
+import DialogCreateAddress from "./DialogCreateAddress";
 import DialogFinalizarPedido from "./DialogFinalizarPedido";
 import Notification from "./Notification";
-import { useAdressContext } from "../context/useAdress";
+import { useAddressContext } from "../context/useAddress";
 
 export default function DrawerComponent({
   isPedidoOpen,
@@ -47,8 +47,13 @@ export default function DrawerComponent({
     itensPedido,
     handleCalculaTotalPedido,
   } = usePedidoContext();
-  const { cupomSelecionado, qtdCupons, isCupom, handleSetIsCupom } =
-    useCupomContext();
+  const {
+    cupomSelecionado,
+    qtdCupons,
+    isCupom,
+    handleSetIsCupom,
+    handleSetCupomSelecionado,
+  } = useCupomContext();
   const [isCadastrarEndereco, setIsCadastrarEndereco] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
   const [valorDesconto, setValorDesconto] = useState(0);
@@ -66,14 +71,20 @@ export default function DrawerComponent({
     setAnchorEl(null);
   };
   const { getCupom } = useCupomContext();
-  const { adresses, handleSelectAdress, selectedAdress, getAdress } =
-    useAdressContext();
+  const { addresses, handleSelectAddress, selectedAddress, getAddress } =
+    useAddressContext();
 
   const [notification, setNotification] = useState({
     open: false,
-    message: "",
-    type: "error",
+    message: "Pedido gerado!",
+    type: "success",
   });
+
+  useEffect(() => {
+    if (!cupomSelecionado.id) {
+      handleSetCupomSelecionado({ id: 0 });
+    }
+  }, []);
 
   useEffect(() => {
     if (isPedidoOpen) {
@@ -81,7 +92,7 @@ export default function DrawerComponent({
       const hashUser = localStorage.getItem("user");
       const user = getDecrypted(hashUser);
       const userId = user.id;
-      getAdress(userId, token);
+      getAddress(userId, token);
       calcularFrete();
       getCupom(token);
       setAnchorEl(null);
@@ -104,17 +115,18 @@ export default function DrawerComponent({
     setValorDesconto(valorDesconto);
     const valorTotal = totalPedido + valorFrete - valorDesconto;
     setValorTotal(valorTotal);
-  }, [cupomSelecionado, totalPedido, valorFrete]);
+  }, [cupomSelecionado, totalPedido, itensPedido, valorFrete]);
 
   const calcularFrete = async () => {
     try {
-      const cepCliente = selectedAdress.cep?.replace(/\D/g, "");
+      const cepCliente = selectedAddress.cep?.replace(/\D/g, "");
       if (cepCliente && cepRestaurante) {
         const resp = await apiRaul.get(
           `/frete/cepDeOrigem/${cepRestaurante}/cepDeDestino/${cepCliente}`
         );
         const valorFrete = resp.data.custo;
         setValorFrete(valorFrete);
+        console.log(totalPedido, valorFrete, valorDesconto);
         const valorTotal = totalPedido + valorFrete - valorDesconto;
         setValorTotal(valorTotal);
       }
@@ -140,9 +152,9 @@ export default function DrawerComponent({
   const handleFinalizarPedido = async () => {
     try {
       setIsLoading(true);
-      const adress = getDecrypted(adress);
-      const idEndereco = adress.id;
-      const idCliente = adress.cliente.id;
+
+      const idEndereco = selectedAddress.id;
+      const idCliente = selectedAddress.cliente.id;
       const idCupom = cupomSelecionado ? cupomSelecionado.id : 0;
 
       const body = {
@@ -164,7 +176,6 @@ export default function DrawerComponent({
       };
 
       const resp = await api.post("/pedidos", JSON.stringify(body));
-      console.log(resp);
 
       if (resp.status === 201 && setTimeout(500)) {
         setOpenAlert(true);
@@ -174,6 +185,7 @@ export default function DrawerComponent({
       }
     } catch (error) {
       console.log(error);
+      setOpenAlert(true);
       setNotification({
         open: true,
         message:
@@ -261,7 +273,7 @@ export default function DrawerComponent({
                   justifyContent: "center",
                 }}
               >
-                {selectedAdress && (
+                {selectedAddress && (
                   <Paper
                     style={{
                       marginBottom: "1rem",
@@ -286,7 +298,7 @@ export default function DrawerComponent({
                           fontWeight: 600,
                         }}
                       >
-                        {selectedAdress.nome}
+                        {selectedAddress.nome}
                       </h1>
                       <h3
                         style={{
@@ -294,7 +306,7 @@ export default function DrawerComponent({
                           fontSize: "1rem",
                         }}
                       >
-                        {`${selectedAdress.rua}, ${selectedAdress.cep} - ${selectedAdress.bairro}, ${selectedAdress.cidade} - ${selectedAdress.estado}`}
+                        {`${selectedAddress.rua}, ${selectedAddress.cep} - ${selectedAddress.bairro}, ${selectedAddress.cidade} - ${selectedAddress.estado}`}
                       </h3>
                       <h3
                         style={{
@@ -302,7 +314,7 @@ export default function DrawerComponent({
                           fontSize: ".9rem",
                         }}
                       >
-                        {selectedAdress.complemento || ""}
+                        {selectedAddress.complemento || ""}
                       </h3>
                     </div>
                     <div
@@ -348,15 +360,16 @@ export default function DrawerComponent({
                             open={open}
                             onClose={() => handleCloseMenu()}
                           >
-                            {adresses
-                              ? adresses.map((adress) => (
+                            {addresses
+                              ? addresses.map((address, index) => (
                                   <MenuItem
+                                    key={index}
                                     onClick={() => {
                                       handleCloseMenu();
-                                      handleSelectAdress(adress);
+                                      handleSelectAddress(address);
                                     }}
                                   >
-                                    {adress.nome}
+                                    {address.nome}
                                   </MenuItem>
                                 ))
                               : ""}
@@ -527,7 +540,7 @@ export default function DrawerComponent({
           </>
         )}
       </div>
-      <DialogCreateAdress
+      <DialogCreateAddress
         isOpen={isCadastrarEndereco}
         handleClose={() => setIsCadastrarEndereco(false)}
       />
@@ -537,15 +550,15 @@ export default function DrawerComponent({
         setIsFinalizandoPedido={() => setIsFinalizandoPedido(false)}
         formaSelecionada={formaSelecionada}
         setFormaSelecionada={(forma) => setFormaSelecionada(forma)}
-        adress={selectedAdress}
+        address={selectedAddress}
         isLoading={isLoading}
         handleStop={() => setIsLoading(false)}
       />
       <Notification
         handleClose={() => setOpenAlert(false)}
-        message={"Pedido gerado!"}
+        message={notification.message}
         open={openAlert}
-        type={"success"}
+        type={notification.type}
       />
     </Drawer>
   );

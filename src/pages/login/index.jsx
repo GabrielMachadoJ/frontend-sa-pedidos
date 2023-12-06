@@ -8,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import Notification from "../../components/Notification";
 import { useCupomContext } from "../../context/useCupom";
 import { getEncrypted } from "../../utils/crypto";
-import { useAdressContext } from "../../context/useAdress";
+import { useAddressContext } from "../../context/useAddress";
 
 export default function Login() {
   const { screenWidth } = useScreenSizeContext();
@@ -19,7 +19,7 @@ export default function Login() {
   const [typeNotification, setTypeNotification] = useState("error");
   const navigate = useNavigate();
   const { getCupom } = useCupomContext();
-  const { getAdress } = useAdressContext();
+  const { getAddress } = useAddressContext();
 
   const getUser = async (token) => {
     const tokenPayload = jwtDecode(token);
@@ -35,7 +35,7 @@ export default function Login() {
       const cryptoUserInfos = getEncrypted(userInfos);
       localStorage.setItem("user", cryptoUserInfos);
       getCupom(token);
-      getAdress(idCliente, token);
+      getAddress(idCliente, token);
     }
   };
 

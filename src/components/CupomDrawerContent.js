@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { CaretLeft, Lock, Ticket } from "@phosphor-icons/react";
 import { useCupomContext } from "../context/useCupom";
+import { useEffect } from "react";
 
 export default function CupomDrawerContent({ setIsCupom }) {
   const { cupons, cupomSelecionado, handleSetCupomSelecionado } =

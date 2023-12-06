@@ -8,15 +8,16 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
-import AdressImage from "../assets/adress.png";
+import AddressImage from "../assets/address.png";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import { apiCep, apiKauan } from "../service/api";
 import { useState } from "react";
 import Notification from "./Notification";
 import { getDecrypted } from "../utils/crypto";
-import Loading from "../components/Loading";
+import Loading from "./Loading";
+import { useAddressContext } from "../context/useAddress";
 
-export default function DialogCreateAdress({ isOpen, handleClose }) {
+export default function DialogCreateAddress({ isOpen, handleClose }) {
   const [cepSelecionado, setCepSelecionado] = useState("");
   const [openAlert, setOpenAlert] = useState(false);
   const [message, setMessage] = useState("");
@@ -30,6 +31,7 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
   const [uf, setUf] = useState("");
   const [cep, setCep] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { getAddress } = useAddressContext();
 
   const handleBuscarCep = async () => {
     try {
@@ -58,6 +60,7 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
       const token = localStorage.getItem("token");
       const user = localStorage.getItem("user");
       const decryptedUser = getDecrypted(user);
+      console.log(decryptedUser);
       const userId = decryptedUser.id;
       const data = {
         nome: apelido,
@@ -78,7 +81,9 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(resp);
+      if (resp.status === 201) {
+        getAddress(userId, token);
+      }
     } catch (error) {
       setType("error");
       setMessage("erro ao cadastrar endereço!");
@@ -99,7 +104,7 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
             justifyContent: "center",
           }}
         >
-          <img width={300} height={180} src={AdressImage} />
+          <img width={300} height={180} src={AddressImage} />
           <h1
             style={{
               fontSize: "1.6rem",
@@ -307,7 +312,10 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
         open={openAlert}
         type={type}
       />
-      <div> <Loading isLoading={isLoading} handleStop={() => setIsLoading(false)} /></div>
+      <div>
+        {" "}
+        <Loading isLoading={isLoading} handleStop={() => setIsLoading(false)} />
+      </div>
     </Dialog>
   );
 }

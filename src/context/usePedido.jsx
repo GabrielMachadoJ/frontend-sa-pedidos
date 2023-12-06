@@ -37,7 +37,7 @@ export function PedidoProvider({ children }) {
 
   const handleSetItens = (op) => {
     setItensPedido(op);
-  }
+  };
 
   const handleCalculaTotalPedido = () => {
     let total = 0;
@@ -46,6 +46,10 @@ export function PedidoProvider({ children }) {
     });
     setTotalPedido(total);
   };
+
+  useEffect(() => {
+    handleCalculaTotalPedido();
+  }, [itensPedido]);
 
   const handleSetNomeRestaurante = (nome) => {
     setNomeRestaurante(nome);
@@ -62,12 +66,6 @@ export function PedidoProvider({ children }) {
   const handleSetIdRestaurante = (id) => {
     setIdRestaurante(Number(id));
   };
-
-  useEffect(() => {
-    if (itensPedido.length > 0) {
-      handleCalculaTotalPedido();
-    }
-  }, [itensPedido]);
 
   return (
     <PedidoContext.Provider
