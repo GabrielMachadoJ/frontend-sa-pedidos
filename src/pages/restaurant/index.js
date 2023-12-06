@@ -39,13 +39,15 @@ export default function Restaurant() {
   const [opcoesPermitidas, setOpcoesPermitidas] = useState([]);
   const [notification, setNotification] = useState({
     open: false,
-    message: '',
-    type: 'error',
+    message: "",
+    type: "error",
   });
 
   const handleCloseNotification = () => {
     setNotification({ ...notification, open: false });
   };
+
+  const URL = process.env.REACT_APP_URL_LAUDELINO;
 
   useEffect(() => {
     const getCardapioRestaurante = async () => {
@@ -69,7 +71,7 @@ export default function Restaurant() {
         const opcoesPromises = [];
 
         for (const opcao of responseData?.opcoes || []) {
-          const nomeSecao = opcao.secao.nome
+          const nomeSecao = opcao.secao.nome;
           if (!opSecao[nomeSecao]) {
             opSecao[nomeSecao] = [];
           }
@@ -112,13 +114,18 @@ export default function Restaurant() {
   };
 
   const handleAddOpcao = (op) => {
-    const idRestauranteSelecionado = localStorage.getItem('id_restaurante') || '';
+    const idRestauranteSelecionado =
+      localStorage.getItem("id_restaurante") || "";
 
-    if (idRestauranteSelecionado && idRestauranteSelecionado !== idRestaurante) {
+    if (
+      idRestauranteSelecionado &&
+      idRestauranteSelecionado !== idRestaurante
+    ) {
       setNotification({
         open: true,
-        message: "Não é possível adicionar uma opção de um restaurante diferente.",
-        type: 'error',
+        message:
+          "Não é possível adicionar uma opção de um restaurante diferente.",
+        type: "error",
       });
       return;
     }
@@ -140,7 +147,7 @@ export default function Restaurant() {
       handleSetNomeRestaurante(name);
       setQuantidadeSelecionada(1);
 
-      localStorage.setItem('id_restaurante', idRestaurante);
+      localStorage.setItem("id_restaurante", idRestaurante);
 
       handleCloseModal();
     }
@@ -218,7 +225,7 @@ export default function Restaurant() {
                   style={{ borderLeft: "2px solid #e4d9d97a", width: "10rem" }}
                 >
                   <img
-                    src={`https://cardapios-mktplace-api-production.up.railway.app/opcoes/id/${opcao.id}/foto`}
+                    src={`${URL}/opcoes/id/${opcao.id}/foto`}
                     alt="Imagem Redonda"
                     style={{
                       width: "100%",
@@ -240,7 +247,7 @@ export default function Restaurant() {
       <Header />
       <div
         style={{
-          backgroundImage: `url(https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${idRestaurante}/foto)`,
+          backgroundImage: `url(${URL}/restaurantes/id/${idRestaurante}/foto)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "18rem",
@@ -265,7 +272,7 @@ export default function Restaurant() {
             type={notification.type}
           />
           <img
-            src={`https://cardapios-mktplace-api-production.up.railway.app/restaurantes/id/${idRestaurante}/foto`}
+            src={`${URL}/restaurantes/id/${idRestaurante}/foto`}
             alt="Imagem Redonda"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
@@ -275,12 +282,12 @@ export default function Restaurant() {
       </div>
       {response
         ? Object.keys(opcoesPorSecao).map((secaoNome) => (
-          <SecaoComponent
-            key={secaoNome}
-            secaoNome={secaoNome}
-            opcoes={opcoesPorSecao[secaoNome]}
-          />
-        ))
+            <SecaoComponent
+              key={secaoNome}
+              secaoNome={secaoNome}
+              opcoes={opcoesPorSecao[secaoNome]}
+            />
+          ))
         : ""}
       <Dialog
         open={openModalOpcao}
@@ -294,7 +301,7 @@ export default function Restaurant() {
           <div style={{ display: "flex" }}>
             <div style={{ width: "10rem", marginRight: ".6rem" }}>
               <img
-                src={`https://cardapios-mktplace-api-production.up.railway.app/opcoes/id/${opcaoSelecionada.id}/foto`}
+                src={`${URL}/opcoes/id/${opcaoSelecionada.id}/foto`}
                 alt="Imagem Redonda"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
