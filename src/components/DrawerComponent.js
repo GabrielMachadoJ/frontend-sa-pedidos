@@ -177,7 +177,7 @@ export default function DrawerComponent({
 
       const resp = await api.post("/pedidos", JSON.stringify(body));
 
-      if (resp.status === 201 && setTimeout(500)) {
+      if (resp.status === 201 && setTimeout(2000)) {
         setOpenAlert(true);
         navigate("/pedidos");
         window.location.reload();
