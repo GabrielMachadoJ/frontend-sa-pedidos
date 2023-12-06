@@ -158,6 +158,7 @@ export default function DrawerComponent({
         setOpenAlert(true);
         navigate("/pedidos");
         window.location.reload();
+        localStorage.removeItem("id_restaurante");
       }
     } catch (error) {
       console.log(error);
