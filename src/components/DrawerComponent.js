@@ -97,7 +97,7 @@ export default function DrawerComponent({
       getCupom(token);
       setAnchorEl(null);
     }
-  }, [isPedidoOpen]);
+  }, [isPedidoOpen, cupomSelecionado, totalPedido, itensPedido, valorFrete]);
 
   useEffect(() => {
     let valorDesconto = 0;
@@ -177,7 +177,7 @@ export default function DrawerComponent({
 
       const resp = await api.post("/pedidos", JSON.stringify(body));
 
-      if (resp.status === 201 && setTimeout(2000)) {
+      if (resp.status === 201 && setTimeout(3000)) {
         setOpenAlert(true);
         navigate("/pedidos");
         window.location.reload();
