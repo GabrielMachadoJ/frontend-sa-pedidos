@@ -12,6 +12,7 @@ export default function DialogFinalizarPedido({
   isLoading,
   handleStop,
 }) {
+
   return (
     <Dialog
       open={isFinalizandoPedido}

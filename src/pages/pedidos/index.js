@@ -105,10 +105,12 @@ export default function PedidosPage() {
         {pedidos.length > 0 ? (
           pedidos.map((pedido) => (
             <PedidoCard
+              id={pedido.id_pedido}
               idRestaurante={pedido.restaurante.id_restaurante}
               opcao={pedido.opcoes}
               status={pedido.status}
               nomeRestaurante={pedido.restaurante.nome}
+              valorTotal={pedido.valor_total}
             />
           ))
         ) : (

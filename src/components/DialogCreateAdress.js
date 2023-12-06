@@ -14,6 +14,7 @@ import { apiCep, apiKauan } from "../service/api";
 import { useState } from "react";
 import Notification from "./Notification";
 import { getDecrypted } from "../utils/crypto";
+import Loading from "../components/Loading";
 
 export default function DialogCreateAdress({ isOpen, handleClose }) {
   const [cepSelecionado, setCepSelecionado] = useState("");
@@ -28,9 +29,11 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
   const [apelido, setApelido] = useState("");
   const [uf, setUf] = useState("");
   const [cep, setCep] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleBuscarCep = async () => {
     try {
+      setIsLoading(true);
       const cep = cepSelecionado.replace(/\D/g, "");
       setCep(cep);
       const resp = await apiCep.get(`/ws/${cep}/json/`);
@@ -44,10 +47,13 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
       setType("error");
       setMessage("Cep inválido!");
       setOpenAlert(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleCadastrarEndereco = async () => {
+    setIsLoading(true);
     try {
       const token = localStorage.getItem("token");
       const user = localStorage.getItem("user");
@@ -76,7 +82,9 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
     } catch (error) {
       setType("error");
       setMessage("erro ao cadastrar endereço!");
-      setOpenAlert(true);
+    } finally {
+      setIsLoading(false);
+      handleClose();
     }
   };
 
@@ -299,6 +307,7 @@ export default function DialogCreateAdress({ isOpen, handleClose }) {
         open={openAlert}
         type={type}
       />
+      <div> <Loading isLoading={isLoading} handleStop={() => setIsLoading(false)} /></div>
     </Dialog>
   );
 }

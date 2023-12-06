@@ -1,13 +1,16 @@
 import { Divider } from "@mui/material";
 
 export default function PedidoCard({
+  id,
   idRestaurante,
   status,
   nomeRestaurante,
   opcao,
+  valorTotal,
 }) {
   const URL = process.env.REACT_APP_URL_LAUDELINO;
   const statusFormatado = status.replace(/_/g, " ");
+
   return (
     <div
       style={{
@@ -48,7 +51,7 @@ export default function PedidoCard({
           <span
             style={{ fontSize: ".9rem", fontWeight: 500, color: "#979494" }}
           >
-            {statusFormatado}
+            {statusFormatado} - Pedido n° {id}
           </span>
         </div>
       </div>
@@ -74,6 +77,12 @@ export default function PedidoCard({
           </h3>
         </div>
       ))}
+      <Divider style={{ margin: "0.5rem 0 .5rem 0" }} />
+      <div>
+        <span style={{ fontSize: ".9rem", fontWeight: 500, color: "#979494" }}>
+          Valor Total: R${valorTotal}
+        </span>
+      </div>
     </div>
   );
 }

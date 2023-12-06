@@ -69,6 +69,12 @@ export default function DrawerComponent({
   const { adresses, handleSelectAdress, selectedAdress, getAdress } =
     useAdressContext();
 
+  const [notification, setNotification] = useState({
+    open: false,
+    message: "",
+    type: "error",
+  });
+
   useEffect(() => {
     if (isPedidoOpen) {
       const token = localStorage.getItem("token");
@@ -158,13 +164,22 @@ export default function DrawerComponent({
       };
 
       const resp = await api.post("/pedidos", JSON.stringify(body));
-      if (resp.status === 201) {
+      console.log(resp);
+
+      if (resp.status === 201 && setTimeout(500)) {
         setOpenAlert(true);
         navigate("/pedidos");
         window.location.reload();
+        localStorage.removeItem("id_restaurante");
       }
     } catch (error) {
       console.log(error);
+      setNotification({
+        open: true,
+        message:
+          "Não é possível criar um pedido. Verifique todas as informações.",
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
