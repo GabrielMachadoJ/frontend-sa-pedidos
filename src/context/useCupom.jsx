@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getDecrypted } from "../utils/crypto";
+import { getDecrypted, getEncrypted } from "../utils/crypto";
+import { apiKauan } from "../service/api";
 
 const CupomContext = createContext();
 
@@ -23,6 +24,24 @@ export function CupomProvider({ children }) {
     }
   };
 
+  const getCupom = async (token) => {
+    const response = await apiKauan.get(
+      "https://gestao-de-cadastros-api-production.up.railway.app/cupons",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = response.data;
+
+    if (data) {
+      const hashCupom = getEncrypted(data);
+      localStorage.setItem("cupom", hashCupom);
+      handleSetCupons();
+    }
+  };
+
   const handleSetIsCupom = (openOrNot) => {
     setIsCupom(openOrNot);
   };
@@ -37,6 +56,7 @@ export function CupomProvider({ children }) {
         handleSetIsCupom,
         handleSetCupomSelecionado,
         handleSetCupons,
+        getCupom,
       }}
     >
       {children}

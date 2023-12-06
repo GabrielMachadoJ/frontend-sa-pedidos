@@ -57,7 +57,6 @@ export default function DrawerComponent({
   const [desconto, setDesconto] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { adress, selectedAdress, getAdress } = useAdressContext();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -66,7 +65,9 @@ export default function DrawerComponent({
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-  const { adresses, handleSelectAdress } = useAdressContext();
+  const { getCupom } = useCupomContext();
+  const { adresses, handleSelectAdress, adress, selectedAdress, getAdress } =
+    useAdressContext();
 
   useEffect(() => {
     if (isPedidoOpen) {
@@ -76,6 +77,7 @@ export default function DrawerComponent({
       const userId = user.id;
       getAdress(userId, token);
       calcularFrete();
+      getCupom(token);
       setAnchorEl(null);
     }
   }, [isPedidoOpen]);
